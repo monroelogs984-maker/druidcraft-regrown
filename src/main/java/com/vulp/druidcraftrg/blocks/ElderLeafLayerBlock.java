@@ -1,5 +1,6 @@
 package com.vulp.druidcraftrg.blocks;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -45,5 +46,10 @@ public class ElderLeafLayerBlock extends BushBlock {
    @Override
    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
       builder.add(DECAY);
+   }
+
+   @Override
+   public MapCodec<? extends ElderLeafLayerBlock> codec() {
+      return simpleCodec(ElderLeafLayerBlock::new);
    }
 }

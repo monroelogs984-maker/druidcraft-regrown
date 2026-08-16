@@ -27,7 +27,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -55,7 +54,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 
 public class DreadfishEntity extends TameableMonsterEntity implements FlyingAnimal {
    private static final Predicate<LivingEntity> isPlayer = entity -> entity.getType() == EntityType.PLAYER;
@@ -66,12 +65,12 @@ public class DreadfishEntity extends TameableMonsterEntity implements FlyingAnim
    public DreadfishEntity(EntityType<? extends TameableMonsterEntity> type, Level worldIn) {
       super(type, worldIn);
       this.moveControl = new FlyingMoveControl(this, 10, false);
-      this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, -1.0F);
-      this.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, -1.0F);
-      this.setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
-      this.setPathfindingMalus(BlockPathTypes.WATER_BORDER, -1.0F);
-      this.setPathfindingMalus(BlockPathTypes.COCOA, -1.0F);
-      this.setPathfindingMalus(BlockPathTypes.FENCE, -1.0F);
+      this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+      this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
+      this.setPathfindingMalus(PathType.WATER, -1.0F);
+      this.setPathfindingMalus(PathType.WATER_BORDER, -1.0F);
+      this.setPathfindingMalus(PathType.COCOA, -1.0F);
+      this.setPathfindingMalus(PathType.FENCE, -1.0F);
       this.setTamed(false);
    }
 
@@ -101,9 +100,9 @@ public class DreadfishEntity extends TameableMonsterEntity implements FlyingAnim
    }
 
    @Override
-   protected void defineSynchedData() {
-      super.defineSynchedData();
-      this.entityData.define(SMOKE_COLOR, DyeColor.PURPLE.getId());
+   protected void defineSynchedData(SynchedEntityData.Builder builder) {
+      super.defineSynchedData(builder);
+      builder.define(SMOKE_COLOR, DyeColor.PURPLE.getId());
    }
 
    @Override
@@ -124,11 +123,6 @@ public class DreadfishEntity extends TameableMonsterEntity implements FlyingAnim
       BlockState below = worldIn.getBlockState(pos.below());
       return worldIn.getDifficulty() != Difficulty.PEACEFUL && isValidLightLevel(worldIn, pos, randomIn)
          && (below.isValidSpawn(worldIn, pos.below(), type) || below.isValidSpawn(worldIn, pos.below(2), type));
-   }
-
-   @Override
-   protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-      return 0.2F;
    }
 
    @Override
@@ -177,11 +171,6 @@ public class DreadfishEntity extends TameableMonsterEntity implements FlyingAnim
       if (compound.contains("SmokeColor", 99)) {
          this.setSmokeColor(DyeColor.byId(compound.getInt("SmokeColor")));
       }
-   }
-
-   @Override
-   public MobType getMobType() {
-      return MobType.UNDEAD;
    }
 
    @Override
@@ -299,7 +288,7 @@ public class DreadfishEntity extends TameableMonsterEntity implements FlyingAnim
    }
 
    @Override
-   public boolean canBeLeashed(Player player) {
+   public boolean canBeLeashed() {
       return !this.isHostile() && !this.isTamed();
    }
 

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "amber_blocks",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "druidcraftrg:amber"
+    }
+  },
+  "result": {
+    "id": "druidcraftrg:amber_block"
+  }
+}

@@ -22,11 +22,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
@@ -69,7 +70,12 @@ public class CrateBlock extends BaseEntityBlock {
       return createTickerHelper(blockEntity, BlockEntityInit.crate, CrateTileEntity::serverTick);
    }
 
-   public InteractionResult use(final BlockState state, final Level world, final BlockPos pos, Player player, InteractionHand hand, BlockHitResult rayTrace) {
+   @Override
+   public MapCodec<? extends CrateBlock> codec() {
+      return simpleCodec(CrateBlock::new);
+   }
+
+   public InteractionResult useWithoutItem(final BlockState state, final Level world, final BlockPos pos, Player player, BlockHitResult rayTrace) {
       if (world.isClientSide) {
          return InteractionResult.SUCCESS;
       } else {
@@ -482,8 +488,7 @@ public class CrateBlock extends BaseEntityBlock {
       return RenderShape.MODEL;
    }
    @Override
-   public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
-      if (level == null) return;
+   public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
       if (!Screen.hasShiftDown()) {
          tooltip.add(Component.translatable("block.druidcraftrg.hold_shift").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
       } else {

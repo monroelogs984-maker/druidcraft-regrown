@@ -1,8 +1,0 @@
-{
-  "type": "druidcraftrg:woodcutting",
-  "ingredient": {
-    "item": "minecraft:acacia_planks"
-  },
-  "result": "druidcraftrg:acacia_panels",
-  "count": 1
-}

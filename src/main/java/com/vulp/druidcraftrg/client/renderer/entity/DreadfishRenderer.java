@@ -11,10 +11,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class DreadfishRenderer extends MobRenderer<DreadfishEntity, DreadfishModel> {
-   private static final ResourceLocation DREADFISH_HEALTH_FULL = new ResourceLocation("druidcraftrg", "textures/entity/dreadfish/dreadfish_0.png");
-   private static final ResourceLocation DREADFISH_HEALTH_HIGH = new ResourceLocation("druidcraftrg", "textures/entity/dreadfish/dreadfish_1.png");
-   private static final ResourceLocation DREADFISH_HEALTH_MEDIUM = new ResourceLocation("druidcraftrg", "textures/entity/dreadfish/dreadfish_2.png");
-   private static final ResourceLocation DREADFISH_HEALTH_LOW = new ResourceLocation("druidcraftrg", "textures/entity/dreadfish/dreadfish_3.png");
+   private static final ResourceLocation DREADFISH_HEALTH_FULL = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/entity/dreadfish/dreadfish_0.png");
+   private static final ResourceLocation DREADFISH_HEALTH_HIGH = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/entity/dreadfish/dreadfish_1.png");
+   private static final ResourceLocation DREADFISH_HEALTH_MEDIUM = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/entity/dreadfish/dreadfish_2.png");
+   private static final ResourceLocation DREADFISH_HEALTH_LOW = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/entity/dreadfish/dreadfish_3.png");
 
    public DreadfishRenderer(EntityRendererProvider.Context context) {
       super(context, new DreadfishModel(context.bakeLayer(ModelLayerInit.DREADFISH_LAYER)), 0.3F);
@@ -37,8 +37,8 @@ public class DreadfishRenderer extends MobRenderer<DreadfishEntity, DreadfishMod
    }
 
    @Override
-   protected void setupRotations(DreadfishEntity entityLiving, PoseStack matrix, float ageInTicks, float rotationYaw, float partialTicks) {
-      super.setupRotations(entityLiving, matrix, ageInTicks, rotationYaw, partialTicks);
+   protected void setupRotations(DreadfishEntity entityLiving, PoseStack matrix, float ageInTicks, float rotationYaw, float partialTicks, float scale) {
+      super.setupRotations(entityLiving, matrix, ageInTicks, rotationYaw, partialTicks, scale);
       float f2 = 4.3F * Mth.sin(0.6F * ageInTicks);
       if (!entityLiving.isSitting()) {
          matrix.mulPose(Axis.YP.rotationDegrees(f2));

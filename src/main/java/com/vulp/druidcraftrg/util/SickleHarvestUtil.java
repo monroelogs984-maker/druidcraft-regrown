@@ -10,7 +10,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ForgeHooks;
 
 public class SickleHarvestUtil {
    public static void breakNeighbours(ItemStack tool, Level level, BlockPos pos, Player player) {
@@ -29,7 +28,7 @@ public class SickleHarvestUtil {
          }
       }
 
-      tool.hurtAndBreak(Math.round(blocksBroken / 2.0F), player, p -> p.broadcastBreakEvent(InteractionHand.MAIN_HAND));
+      tool.hurtAndBreak(Math.round(blocksBroken / 2.0F), player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
    }
 
    public static Set<BlockPos> nearbyBlocks(ItemStack tool, BlockPos pos, Level level, Player player) {
@@ -49,7 +48,7 @@ public class SickleHarvestUtil {
                   continue;
                }
 
-               if (!ForgeHooks.isCorrectToolForDrops(state, player)) {
+               if (!player.hasCorrectToolForDrops(state)) {
                   continue;
                }
 

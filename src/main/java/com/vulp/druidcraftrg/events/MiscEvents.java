@@ -1,18 +1,17 @@
 package com.vulp.druidcraftrg.events;
 
-import com.vulp.druidcraftrg.DruidcraftRegrownRegistry;
+import com.vulp.druidcraftrg.DruidcraftRegrown;
 import com.vulp.druidcraftrg.blocks.BedrollBlock;
-import com.vulp.druidcraftrg.capabilities.TempSpawnProvider;
 import com.vulp.druidcraftrg.config.DruidcraftConfig;
 import com.vulp.druidcraftrg.init.ItemInit;
 import com.vulp.druidcraftrg.inventory.TravelPackInventory;
 import com.vulp.druidcraftrg.items.TravelPackItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -20,18 +19,15 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
-import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.EventBusSubscriber.Bus;
+import net.neoforged.neoforge.event.entity.player.PlayerSetSpawnEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 
-@EventBusSubscriber(
-   modid = "druidcraftrg",
-   bus = Bus.FORGE
-)
+@EventBusSubscriber(modid = DruidcraftRegrown.MODID, bus = Bus.GAME)
 public class MiscEvents {
    // 1.16.5 EventHandler.onBlockBroken seed drops — grass has a chance to drop hemp seeds
    @SubscribeEvent
@@ -45,20 +41,14 @@ public class MiscEvents {
          return;
       }
       BlockState state = event.getState();
-      if (state.is(Blocks.GRASS) || state.is(Blocks.TALL_GRASS) || state.is(Blocks.FERN) || state.is(Blocks.LARGE_FERN)) {
+      // Blocks.GRASS was renamed to SHORT_GRASS in 1.20.3
+      if (state.is(Blocks.SHORT_GRASS) || state.is(Blocks.TALL_GRASS) || state.is(Blocks.FERN) || state.is(Blocks.LARGE_FERN)) {
          if (Math.random() <= DruidcraftConfig.hemp_seed_drops.get() / 100.0D) {
             BlockPos pos = event.getPos();
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
             ((Level) level).addFreshEntity(new ItemEntity(
                (Level) level, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, new ItemStack(ItemInit.hemp_seeds)));
          }
-      }
-   }
-
-   @SubscribeEvent
-   public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
-      if (event.getObject() instanceof Player) {
-         event.addCapability(DruidcraftRegrownRegistry.location("temprespawn"), new TempSpawnProvider());
       }
    }
 
@@ -83,14 +73,16 @@ public class MiscEvents {
             return;
          }
       }
-      CompoundTag nbt = itemStack.getOrCreateTag();
+      CompoundTag nbt = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
       if (nbt.contains("BedrollPosX")) {
          BlockPos pos = new BlockPos(nbt.getInt("BedrollPosX"), nbt.getInt("BedrollPosY"), nbt.getInt("BedrollPosZ"));
          Level level = player.level();
          BlockState blockState = level.getBlockState(pos);
          if (blockState.getBlock() instanceof BedrollBlock bedroll) {
+            // write Color to the stack before creating inventory so writeItemStack() preserves it
             nbt.putInt("Color", bedroll.getColor().getId());
-            TravelPackInventory inventory = new TravelPackInventory(itemStack);
+            itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
+            TravelPackInventory inventory = new TravelPackInventory(itemStack, level.registryAccess());
             inventory.setItem(0, new ItemStack(bedroll));
             inventory.writeItemStack();
             Direction facing = blockState.getValue(HorizontalDirectionalBlock.FACING);
@@ -101,9 +93,16 @@ public class MiscEvents {
             level.setBlockAndUpdate(pos.relative(facing.getOpposite()), footBlock.getValue(BedrollBlock.WATERLOGGED)
                ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState());
          }
-         nbt.remove("BedrollPosX");
-         nbt.remove("BedrollPosY");
-         nbt.remove("BedrollPosZ");
+         // remove bedroll pos keys — re-read to see any changes from writeItemStack above
+         CompoundTag updatedNbt = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+         updatedNbt.remove("BedrollPosX");
+         updatedNbt.remove("BedrollPosY");
+         updatedNbt.remove("BedrollPosZ");
+         if (!updatedNbt.isEmpty()) {
+            itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(updatedNbt));
+         } else {
+            itemStack.remove(DataComponents.CUSTOM_DATA);
+         }
       }
    }
 }

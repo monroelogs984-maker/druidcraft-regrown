@@ -1,7 +1,0 @@
-{
-	"type": "minecraft:blasting",
-	"ingredient": { "item": "druidcraftrg:amber_ore" },
-	"result": "druidcraftrg:amber",
-	"experience": 1.0,
-	"cookingtime": 100
-}

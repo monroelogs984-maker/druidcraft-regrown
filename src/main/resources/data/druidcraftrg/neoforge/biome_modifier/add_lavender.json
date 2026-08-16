@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#druidcraftrg:has_lavender",
+  "features": "druidcraftrg:lavender",
+  "step": "vegetal_decoration"
+}

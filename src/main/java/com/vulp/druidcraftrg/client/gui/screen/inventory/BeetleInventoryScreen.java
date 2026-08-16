@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 public class BeetleInventoryScreen extends AbstractContainerScreen<BeetleInventoryContainer> {
-   private static final ResourceLocation BEETLE_GUI_TEXTURES = new ResourceLocation("druidcraftrg", "textures/gui/container/beetle.png");
+   private static final ResourceLocation BEETLE_GUI_TEXTURES = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/gui/container/beetle.png");
    private final BeetleEntity beetleEntity;
    private float mousePosX;
    private float mousePosY;
@@ -39,14 +39,15 @@ public class BeetleInventoryScreen extends AbstractContainerScreen<BeetleInvento
          }
       }
       if (this.beetleEntity != null) {
-         InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, i + 43, j + 62, 17,
+         InventoryScreen.renderEntityInInventoryFollowsMouse(graphics,
+            i + 43 - 30, j + 62 - 50, i + 43 + 30, j + 62 + 20, 17, 0.0F,
             (float) (i + 43) - this.mousePosX, (float) (j + 48) - this.mousePosY, this.beetleEntity);
       }
    }
 
    @Override
    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-      this.renderBackground(graphics);
+      this.renderBackground(graphics, mouseX, mouseY, partialTicks);
       this.mousePosX = (float) mouseX;
       this.mousePosY = (float) mouseY;
       super.render(graphics, mouseX, mouseY, partialTicks);

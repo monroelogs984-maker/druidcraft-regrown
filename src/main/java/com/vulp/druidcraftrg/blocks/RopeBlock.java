@@ -1,5 +1,6 @@
 package com.vulp.druidcraftrg.blocks;
 
+import com.mojang.serialization.MapCodec;
 import com.vulp.druidcraftrg.blocks.tile.RopeTileEntity;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -8,7 +9,6 @@ import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -35,8 +35,8 @@ public class RopeBlock extends SixWayConnectBlock {
    }
 
    @Nullable
-   public BlockPathTypes getAiPathNodeType(BlockState state, BlockGetter world, BlockPos pos, @Nullable Mob entity) {
-      return BlockPathTypes.BLOCKED;
+   public PathType getBlockPathType(BlockState state, BlockGetter world, BlockPos pos, @Nullable Mob entity) {
+      return PathType.BLOCKED;
    }
 
    @Override
@@ -103,8 +103,8 @@ public class RopeBlock extends SixWayConnectBlock {
    }
 
    @Override
-   public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-      ItemStack itemstack = player.getItemInHand(hand);
+   public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+      ItemStack itemstack = player.getMainHandItem();
       if (itemstack.getItem() == Items.LANTERN && hit.getDirection() == Direction.DOWN
             && world.getBlockState(pos.below()).canBeReplaced()) {
          if (!player.getAbilities().instabuild) {
@@ -114,7 +114,12 @@ public class RopeBlock extends SixWayConnectBlock {
          world.playLocalSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.LANTERN_PLACE, SoundSource.BLOCKS, 1.0F, 0.88F, true);
          return InteractionResult.SUCCESS;
       }
-      return super.use(state, world, pos, player, hand, hit);
+      return InteractionResult.PASS;
+   }
+
+   @Override
+   public MapCodec<? extends RopeBlock> codec() {
+      return simpleCodec(props -> new RopeBlock(2.5, 2.5, props));
    }
 
    public static boolean isBeamBlock(BlockState state) {

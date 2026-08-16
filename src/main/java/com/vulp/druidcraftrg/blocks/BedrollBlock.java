@@ -2,8 +2,8 @@ package com.vulp.druidcraftrg.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -30,6 +30,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.phys.Vec3;
@@ -102,12 +103,17 @@ public class BedrollBlock extends BedBlock {
    }
 
    public VoxelShape getCollisionShape(BlockState state, BlockGetter reader, BlockPos pos, CollisionContext context) {
-      int i = ((Direction)state.getValue(FACING)).get2DDataValue();
-      Entity entity = ((EntityCollisionContext)context).getEntity();
-      return entity instanceof Player && ((Player)entity).isSleeping() ? FOOT_SHAPES_OPEN[i] : FOOT_SHAPES[i];
+      int i = state.getValue(FACING).get2DDataValue();
+      boolean sleeping = context instanceof EntityCollisionContext ecc
+         && ecc.getEntity() instanceof Player player && player.isSleeping();
+      boolean head = state.getValue(PART) == BedPart.HEAD;
+      if (sleeping) {
+         return head ? HEAD_SHAPES_OPEN[i] : FOOT_SHAPES_OPEN[i];
+      }
+      return head ? HEAD_SHAPES[i] : FOOT_SHAPES[i];
    }
 
-   public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult rayTrace) {
+   public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult rayTrace) {
       if (world.isClientSide) {
          return InteractionResult.CONSUME;
       } else {
@@ -153,7 +159,7 @@ public class BedrollBlock extends BedBlock {
       }
    }
 
-   public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+   public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
       if (!level.isClientSide && player.isCreative()) {
          BedPart bedpart = (BedPart)state.getValue(PART);
          if (bedpart == BedPart.FOOT) {
@@ -166,7 +172,7 @@ public class BedrollBlock extends BedBlock {
          }
       }
 
-      super.playerWillDestroy(level, pos, state, player);
+      return super.playerWillDestroy(level, pos, state, player);
    }
 
    public int getFlammability(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
@@ -212,12 +218,11 @@ public class BedrollBlock extends BedBlock {
    }
 
    @Override
-   public net.minecraft.world.level.block.entity.BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+   public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
       return null;
    }
    @Override
-   public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
-      if (level == null) return;
+   public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
       if (!Screen.hasShiftDown()) {
          tooltip.add(Component.translatable("block.druidcraftrg.hold_shift").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
       } else {

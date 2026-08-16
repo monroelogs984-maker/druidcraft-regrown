@@ -1,0 +1,9 @@
+{
+  "type": "druidcraftrg:woodcutting",
+  "ingredient": {
+    "item": "minecraft:oak_wood"
+  },
+  "result": {
+    "id": "druidcraftrg:oak_beam"
+  }
+}

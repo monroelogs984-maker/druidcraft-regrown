@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:dark_oak_log"
+    }
+  },
+  "result": {
+    "count": 3,
+    "id": "druidcraftrg:dark_oak_beam"
+  },
+  "group": "beams"
+}

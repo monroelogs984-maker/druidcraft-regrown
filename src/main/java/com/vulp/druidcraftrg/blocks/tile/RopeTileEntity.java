@@ -39,23 +39,23 @@ public class RopeTileEntity extends BlockEntity {
       }
    }
 
-   public void saveAdditional(CompoundTag compound) {
-      super.saveAdditional(compound);
+   public void saveAdditional(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries) {
+      super.saveAdditional(compound, registries);
       compound.putBoolean("Knot", this.forceKnot);
    }
 
-   public void load(CompoundTag compound) {
-      super.load(compound);
+   public void loadAdditional(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries) {
+      super.loadAdditional(compound, registries);
       this.forceKnot = compound.getBoolean("Knot");
    }
 
    public CompoundTag getUpdateTag() {
       CompoundTag nbtTagCompound = new CompoundTag();
-      this.saveAdditional(nbtTagCompound);
+      this.saveAdditional(nbtTagCompound, this.level.registryAccess());
       return nbtTagCompound;
    }
 
-   public void handleUpdateTag(CompoundTag tag) {
-      this.load(tag);
+   public void handleUpdateTag(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+      this.loadAdditional(tag, this.level != null ? this.level.registryAccess() : net.minecraft.core.RegistryAccess.EMPTY);
    }
 }

@@ -12,9 +12,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
@@ -64,22 +64,22 @@ public class LunarMothJarBlock extends RopeableLanternBlock {
    }
 
    @Override
-   public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+   public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hitResult) {
       if (state.getValue(FULLNESS) > 0) {
          popResource(world, pos, new ItemStack(Items.GLOWSTONE_DUST, state.getValue(FULLNESS)));
          world.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0F, 0.8F + world.random.nextFloat() * 0.4F);
          world.setBlock(pos, state.setValue(FULLNESS, 0), 2);
          return InteractionResult.SUCCESS;
       }
-      return super.use(state, world, pos, player, hand, hitResult);
+      return super.useWithoutItem(state, world, pos, player, hitResult);
    }
 
    @Override
-   public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player entity) {
+   public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player entity) {
       if (state.getValue(FULLNESS) > 0) {
          popResource(world, pos, new ItemStack(Items.GLOWSTONE_DUST, state.getValue(FULLNESS)));
       }
-      super.playerWillDestroy(world, pos, state, entity);
+      return super.playerWillDestroy(world, pos, state, entity);
    }
 
    @Override
@@ -121,10 +121,7 @@ public class LunarMothJarBlock extends RopeableLanternBlock {
    }
 
    @Override
-   public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-      if (worldIn == null) {
-         return;
-      }
+   public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
       if (!Screen.hasShiftDown()) {
          tooltip.add(Component.translatable("block.druidcraftrg.hold_shift").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
       } else if (stack.getItem() instanceof LunarMothJarItem jarItem) {

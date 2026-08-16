@@ -1,0 +1,44 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="GNU Lesser General Public License v2.1"
+
+[[accessTransformers]]
+    file="META-INF/accesstransformer.cfg"
+
+[[mods]]
+modId="druidcraftrg"
+version="${file.jarVersion}"
+displayName="Druidcraft Regrown"
+credits="Original mod by VulpTheHorseDog. Thanks to Noobanidus for getting them started years back. 1.21.1 NeoForge port maintained under LGPL 2.1."
+authors="VulpTheHorseDog"
+description='''
+Druidcraft Regrown — nature magic, herbalism, ropes, beams and creatures. Unofficial 1.21.1 NeoForge port of the 1.18.2 beta.
+'''
+
+[[dependencies.druidcraftrg]]
+    modId="neoforge"
+    type="required"
+    versionRange="[21.1,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.druidcraftrg]]
+    modId="minecraft"
+    type="required"
+    versionRange="[1.21.1,1.22)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.druidcraftrg]]
+    modId="terrablender"
+    type="optional"
+    versionRange="[3.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.druidcraftrg]]
+    modId="jei"
+    type="optional"
+    versionRange="[19,)"
+    ordering="AFTER"
+    side="BOTH"

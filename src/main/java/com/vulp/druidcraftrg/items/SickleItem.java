@@ -3,6 +3,7 @@ package com.vulp.druidcraftrg.items;
 import com.vulp.druidcraftrg.util.SickleHarvestUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -12,17 +13,16 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class SickleItem extends DiggerItem {
    // Replaces the 1.16 Material.PLANTS/OCEAN_PLANT/TALL_PLANTS check
    public static final TagKey<Block> SICKLE_EFFICIENT =
-      TagKey.create(ForgeRegistries.BLOCKS.getRegistryKey(), new ResourceLocation("druidcraftrg", "sickle_efficient"));
+      TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("druidcraftrg", "sickle_efficient"));
 
    private final int radius;
 
    public SickleItem(float attackDamage, float attackSpeed, Tier tier, int radius, Properties properties) {
-      super(attackDamage, attackSpeed, tier, SICKLE_EFFICIENT, properties);
+      super(tier, SICKLE_EFFICIENT, properties.attributes(DiggerItem.createAttributes(tier, attackDamage, attackSpeed)));
       this.radius = radius;
    }
 

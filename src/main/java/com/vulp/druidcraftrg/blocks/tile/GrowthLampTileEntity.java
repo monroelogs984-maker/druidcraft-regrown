@@ -12,7 +12,6 @@ import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.IPlantable;
 
 import java.util.List;
 
@@ -54,7 +53,7 @@ public class GrowthLampTileEntity extends BlockEntity {
             for (int z = -2; z < 3; z++) {
                BlockPos newPos = pos.offset(x, y, z);
                Block block = level.getBlockState(newPos).getBlock();
-               if (block instanceof IPlantable || block instanceof BonemealableBlock) {
+               if (block instanceof BonemealableBlock) {
                   level.scheduleTick(newPos, block, 0);
                }
             }

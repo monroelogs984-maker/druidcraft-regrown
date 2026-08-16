@@ -22,9 +22,9 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class DruidShieldRenderer extends BlockEntityWithoutLevelRenderer {
-   public static final ResourceLocation BONE_SHIELD_TEX = new ResourceLocation("druidcraftrg", "entity/shields/bone");
-   public static final ResourceLocation CHITIN_SHIELD_TEX = new ResourceLocation("druidcraftrg", "entity/shields/chitin");
-   public static final ResourceLocation MOONSTONE_SHIELD_TEX = new ResourceLocation("druidcraftrg", "entity/shields/moonstone");
+   public static final ResourceLocation BONE_SHIELD_TEX = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "entity/shields/bone");
+   public static final ResourceLocation CHITIN_SHIELD_TEX = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "entity/shields/chitin");
+   public static final ResourceLocation MOONSTONE_SHIELD_TEX = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "entity/shields/moonstone");
 
    private static DruidShieldRenderer instance;
 
@@ -81,7 +81,7 @@ public class DruidShieldRenderer extends BlockEntityWithoutLevelRenderer {
       Material material = new Material(InventoryMenu.BLOCK_ATLAS, texture);
       VertexConsumer vertexConsumer = material.sprite()
          .wrap(ItemRenderer.getFoilBufferDirect(buffer, model.renderType(material.atlasLocation()), true, stack.hasFoil()));
-      model.renderToBuffer(poseStack, vertexConsumer, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+      model.renderToBuffer(poseStack, vertexConsumer, packedLight, packedOverlay, -1);
       poseStack.popPose();
    }
 }

@@ -14,10 +14,8 @@
       "offset": 0,
       "crown_height": {
         "type": "minecraft:uniform",
-        "value": {
-          "min_inclusive": 11,
-          "max_inclusive": 15
-        }
+        "min_inclusive": 11,
+        "max_inclusive": 15
       }
     },
     "foliage_provider": {

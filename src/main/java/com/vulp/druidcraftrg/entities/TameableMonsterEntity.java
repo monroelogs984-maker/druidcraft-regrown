@@ -28,6 +28,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 
 public class TameableMonsterEntity extends PathfinderMob {
@@ -49,10 +50,10 @@ public class TameableMonsterEntity extends PathfinderMob {
    }
 
    @Override
-   protected void defineSynchedData() {
-      super.defineSynchedData();
-      this.entityData.define(TAMED, (byte) 0);
-      this.entityData.define(OWNER_UNIQUE_ID, Optional.empty());
+   protected void defineSynchedData(SynchedEntityData.Builder builder) {
+      super.defineSynchedData(builder);
+      builder.define(TAMED, (byte) 0);
+      builder.define(OWNER_UNIQUE_ID, Optional.empty());
    }
 
    public static AttributeSupplier.Builder registerAttributes() {
@@ -105,7 +106,7 @@ public class TameableMonsterEntity extends PathfinderMob {
    }
 
    @Override
-   public boolean canBeLeashed(Player player) {
+   public boolean canBeLeashed() {
       return !this.isLeashed();
    }
 
@@ -128,7 +129,7 @@ public class TameableMonsterEntity extends PathfinderMob {
    @Override
    public void aiStep() {
       if (this.isSunBurnTick() && this.burnsInDaylight()) {
-         this.setSecondsOnFire(8);
+         this.igniteForTicks(160);
       }
       this.updateSwingTime();
       super.aiStep();
@@ -228,7 +229,7 @@ public class TameableMonsterEntity extends PathfinderMob {
    }
 
    @Override
-   public Team getTeam() {
+   public PlayerTeam getTeam() {
       if (this.isTamed()) {
          LivingEntity livingentity = this.getOwner();
          if (livingentity != null) {

@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public class BeetleRenderer extends MobRenderer<BeetleEntity, BeetleModel<BeetleEntity>> {
-   private static final ResourceLocation BEETLE = new ResourceLocation("druidcraftrg", "textures/entity/beetle/beetle.png");
+   private static final ResourceLocation BEETLE = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/entity/beetle/beetle.png");
 
    public BeetleRenderer(EntityRendererProvider.Context context) {
       super(context, new BeetleModel<>(context.bakeLayer(ModelLayerInit.BEETLE_LAYER)), 1.2F);

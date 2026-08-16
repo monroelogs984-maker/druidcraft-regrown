@@ -1,80 +1,64 @@
 package com.vulp.druidcraftrg.init;
 
-import java.util.function.Supplier;
-import net.minecraft.sounds.SoundEvent;
+import java.util.EnumMap;
+import java.util.List;
+import net.minecraft.Util;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
-// 1.16.5 ArmorMaterialRegistry (fiery omitted with the disabled fiery set)
-public enum ArmorMaterialInit implements ArmorMaterial {
-   bone("bone", 15, new int[]{1, 4, 5, 2}, 18, () -> Items.BONE, SoundEvents.ARMOR_EQUIP_GOLD, 0.0F, 0.0F),
-   chitin("chitin", 24, new int[]{3, 5, 7, 3}, 12, () -> ItemInit.chitin, SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 0.0F),
-   moonstone("moonstone", 40, new int[]{3, 7, 9, 4}, 15, () -> ItemInit.moonstone, SoundEvents.ARMOR_EQUIP_DIAMOND, 3.0F, 0.0F);
+public class ArmorMaterialInit {
+   public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS =
+      DeferredRegister.create(Registries.ARMOR_MATERIAL, "druidcraftrg");
 
-   // indexed by EquipmentSlot index: feet, legs, chest, head
-   private static final int[] MAX_DAMAGE_ARRAY = new int[]{13, 15, 16, 11};
-   private final String name;
-   private final int durability;
-   private final int[] damageReductionAmount;
-   private final int enchantability;
-   private final SoundEvent equipSound;
-   private final float toughness;
-   private final float knockbackResistance;
-   private final LazyLoadedValue<Ingredient> repairIngredient;
+   public static final DeferredHolder<ArmorMaterial, ArmorMaterial> bone = ARMOR_MATERIALS.register("bone",
+      () -> new ArmorMaterial(
+         Util.make(new EnumMap<>(ArmorItem.Type.class), m -> {
+            m.put(ArmorItem.Type.BOOTS,      1);
+            m.put(ArmorItem.Type.LEGGINGS,   4);
+            m.put(ArmorItem.Type.CHESTPLATE, 5);
+            m.put(ArmorItem.Type.HELMET,     2);
+         }),
+         18,
+         SoundEvents.ARMOR_EQUIP_GOLD,
+         () -> Ingredient.of(Items.BONE),
+         List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath("druidcraftrg", "bone"))),
+         0.0F, 0.0F
+      ));
 
-   ArmorMaterialInit(String name, int durability, int[] damageReductionAmount, int enchantability, Supplier<Item> repairItem, SoundEvent equipSound, float toughness, float knockbackResistance) {
-      this.name = name;
-      this.durability = durability;
-      this.damageReductionAmount = damageReductionAmount;
-      this.enchantability = enchantability;
-      this.equipSound = equipSound;
-      this.toughness = toughness;
-      this.knockbackResistance = knockbackResistance;
-      this.repairIngredient = new LazyLoadedValue<>(() -> Ingredient.of(repairItem.get()));
-   }
+   public static final DeferredHolder<ArmorMaterial, ArmorMaterial> chitin = ARMOR_MATERIALS.register("chitin",
+      () -> new ArmorMaterial(
+         Util.make(new EnumMap<>(ArmorItem.Type.class), m -> {
+            m.put(ArmorItem.Type.BOOTS,      3);
+            m.put(ArmorItem.Type.LEGGINGS,   5);
+            m.put(ArmorItem.Type.CHESTPLATE, 7);
+            m.put(ArmorItem.Type.HELMET,     3);
+         }),
+         12,
+         SoundEvents.ARMOR_EQUIP_LEATHER,
+         () -> Ingredient.of(ItemInit.chitin),
+         List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath("druidcraftrg", "chitin"))),
+         1.0F, 0.0F
+      ));
 
-   @Override
-   public int getDurabilityForType(ArmorItem.Type type) {
-      return MAX_DAMAGE_ARRAY[type.getSlot().getIndex()] * this.durability;
-   }
-
-   @Override
-   public int getDefenseForType(ArmorItem.Type type) {
-      return this.damageReductionAmount[type.getSlot().getIndex()];
-   }
-
-   @Override
-   public int getEnchantmentValue() {
-      return this.enchantability;
-   }
-
-   @Override
-   public SoundEvent getEquipSound() {
-      return this.equipSound;
-   }
-
-   @Override
-   public Ingredient getRepairIngredient() {
-      return this.repairIngredient.get();
-   }
-
-   @Override
-   public String getName() {
-      return "druidcraftrg:" + this.name;
-   }
-
-   @Override
-   public float getToughness() {
-      return this.toughness;
-   }
-
-   @Override
-   public float getKnockbackResistance() {
-      return this.knockbackResistance;
-   }
+   public static final DeferredHolder<ArmorMaterial, ArmorMaterial> moonstone = ARMOR_MATERIALS.register("moonstone",
+      () -> new ArmorMaterial(
+         Util.make(new EnumMap<>(ArmorItem.Type.class), m -> {
+            m.put(ArmorItem.Type.BOOTS,      3);
+            m.put(ArmorItem.Type.LEGGINGS,   7);
+            m.put(ArmorItem.Type.CHESTPLATE, 9);
+            m.put(ArmorItem.Type.HELMET,     4);
+         }),
+         15,
+         SoundEvents.ARMOR_EQUIP_DIAMOND,
+         () -> Ingredient.of(ItemInit.moonstone),
+         List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath("druidcraftrg", "moonstone"))),
+         3.0F, 0.0F
+      ));
 }

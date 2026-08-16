@@ -9,7 +9,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -121,18 +120,18 @@ public class ElderFruitBlock extends CropBlock {
          int i = this.getAge(state);
          float f = getGrowthChance(this, level, pos);
          if (i < this.getMaxAge()) {
-            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(level, pos, state, random.nextInt((int) (25.0F / f) + 1) == 0)) {
+            if (net.neoforged.neoforge.common.CommonHooks.canCropGrow(level, pos, state, random.nextInt((int) (25.0F / f) + 1) == 0)) {
                level.setBlockAndUpdate(pos, state.setValue(AGE, state.getValue(AGE) + 1));
-               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(level, pos, state);
+               net.neoforged.neoforge.common.CommonHooks.fireCropGrowPost(level, pos, state);
             }
          } else if (CropLifeStageType.checkCropLife(level) == CropLifeStageType.BERRY && state.getValue(LIFE_STAGE) != CropLifeStageType.BERRY || state.getValue(MID_BERRY)) {
-            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(level, pos, state, random.nextInt((int) (25.0F / f) + 1) == 0) && i == this.getMaxAge()) {
+            if (net.neoforged.neoforge.common.CommonHooks.canCropGrow(level, pos, state, random.nextInt((int) (25.0F / f) + 1) == 0) && i == this.getMaxAge()) {
                if (state.getValue(LIFE_STAGE) == CropLifeStageType.BERRY && state.getValue(MID_BERRY)) {
                   level.setBlockAndUpdate(pos, state.setValue(MID_BERRY, false));
                } else if (state.getValue(LIFE_STAGE) != CropLifeStageType.BERRY) {
                   level.setBlockAndUpdate(pos, state.setValue(MID_BERRY, true).setValue(LIFE_STAGE, CropLifeStageType.BERRY));
                }
-               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(level, pos, state);
+               net.neoforged.neoforge.common.CommonHooks.fireCropGrowPost(level, pos, state);
             }
          }
       }
@@ -204,7 +203,7 @@ public class ElderFruitBlock extends CropBlock {
    }
 
    @Override
-   public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+   public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
       if (level.isClientSide) {
          return InteractionResult.CONSUME;
       }
@@ -213,11 +212,11 @@ public class ElderFruitBlock extends CropBlock {
       } else if (isMaxAge(state) && state.getValue(MID_BERRY)) {
          return InteractionResult.FAIL;
       }
-      return super.use(state, level, pos, player, hand, hit);
+      return InteractionResult.PASS;
    }
 
    @Override
-   public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state, boolean isClient) {
+   public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
       return !this.isMaxAge(state) && isGrowable(level, pos);
    }
 

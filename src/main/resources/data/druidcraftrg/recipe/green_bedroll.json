@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "WWW"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:green_wool"
+    },
+    "W": {
+      "item": "druidcraftrg:hemp"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "druidcraftrg:green_bedroll"
+  }
+}

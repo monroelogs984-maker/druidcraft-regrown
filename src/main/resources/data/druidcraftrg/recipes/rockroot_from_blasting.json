@@ -1,7 +1,0 @@
-{
-	"type": "minecraft:blasting",
-	"ingredient": { "item": "druidcraftrg:rockroot_ore" },
-	"result": "druidcraftrg:rockroot",
-	"experience": 1.0,
-	"cookingtime": 100
-}

@@ -5,12 +5,12 @@ import com.vulp.druidcraftrg.entities.TameableMonsterEntity;
 import com.vulp.druidcraftrg.inventory.TravelPackInventory;
 import com.vulp.druidcraftrg.inventory.container.TravelPackContainer;
 import java.util.List;
-import java.util.Optional;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,6 +27,7 @@ import net.minecraft.world.item.BedItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
@@ -34,8 +35,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.network.NetworkHooks;
 
 public class TravelPackItem extends Item {
 
@@ -47,7 +46,7 @@ public class TravelPackItem extends Item {
    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
       ItemStack itemstack = player.getItemInHand(hand);
       if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-         NetworkHooks.openScreen(serverPlayer, new MenuProvider() {
+         serverPlayer.openMenu(new MenuProvider() {
             @Override
             public Component getDisplayName() {
                return itemstack.getHoverName();
@@ -56,7 +55,8 @@ public class TravelPackItem extends Item {
             @Nullable
             @Override
             public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
-               return new TravelPackContainer(id, playerInventory, new TravelPackInventory(itemstack), itemstack);
+               return new TravelPackContainer(id, playerInventory,
+                  new TravelPackInventory(itemstack, playerEntity.level().registryAccess()), itemstack);
             }
          });
       }
@@ -64,9 +64,6 @@ public class TravelPackItem extends Item {
    }
 
    public static void deployBedroll(int entityId, @Nullable Level level) {
-      if (level == null) {
-         return;
-      }
       Entity entity = level.getEntity(entityId);
       if (!(entity instanceof Player player)) {
          return;
@@ -77,8 +74,7 @@ public class TravelPackItem extends Item {
       if (!(itemStack.getItem() instanceof TravelPackItem)) {
          return;
       }
-      CompoundTag nbt = itemStack.getOrCreateTag();
-      TravelPackInventory inventory = new TravelPackInventory(itemStack);
+      TravelPackInventory inventory = new TravelPackInventory(itemStack, level.registryAccess());
       if (!(inventory.getItem(0).getItem() instanceof BedItem bedItem) || !(bedItem.getBlock() instanceof BedrollBlock bedrollBlock)) {
          return;
       }
@@ -100,18 +96,20 @@ public class TravelPackItem extends Item {
          player.displayClientMessage(Component.translatable("block.druidcraftrg.bedroll.fail.dimension"), true);
          return;
       }
-      if (!level.isClientSide && !ForgeEventFactory.fireSleepingTimeCheck(player, Optional.of(pos))) {
-         player.displayClientMessage(Component.translatable("block.druidcraftrg.bedroll.fail.time"), true);
-         return;
-      }
       BlockPos bedrollPos = bedrollPlacementHelper(level, pos, direction, bedrollBlock);
       if (bedrollPos != null) {
+         // write bedroll pos first so writeItemStack() merges Items on top of it
+         CompoundTag nbt = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
          nbt.putInt("BedrollPosX", bedrollPos.getX());
          nbt.putInt("BedrollPosY", bedrollPos.getY());
          nbt.putInt("BedrollPosZ", bedrollPos.getZ());
+         itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
          inventory.removeItemNoUpdate(0);
          inventory.writeItemStack();
-         nbt.putInt("Color", -1);
+         // set Color after writeItemStack so existing nbt keys are preserved
+         CompoundTag nbt2 = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+         nbt2.putInt("Color", -1);
+         itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt2));
          player.startSleepInBed(bedrollPos).ifLeft(problem -> {
             if (problem.getMessage() != null) {
                player.displayClientMessage(problem.getMessage(), true);
@@ -160,19 +158,20 @@ public class TravelPackItem extends Item {
 
    @Override
    public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int slot, boolean isHeldItem) {
-      TravelPackInventory inventory = new TravelPackInventory(itemStack);
+      if (level.isClientSide) return;
+      TravelPackInventory inventory = new TravelPackInventory(itemStack, level.registryAccess());
       ItemStack bedroll = inventory.getItem(0);
       int colorId = bedroll.getItem() instanceof BedItem bed && bed.getBlock() instanceof BedrollBlock bedrollBlock
          ? bedrollBlock.getColor().getId()
          : -1;
-      itemStack.getOrCreateTag().putInt("Color", colorId);
+      CompoundTag nbt = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+      if (nbt.contains("Color") && nbt.getInt("Color") == colorId) return;
+      nbt.putInt("Color", colorId);
+      itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
    }
 
    @Override
-   public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-      if (level == null) {
-         return;
-      }
+   public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
       if (!Screen.hasShiftDown()) {
          tooltip.add(Component.translatable("item.druidcraftrg.hold_shift").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
       } else {

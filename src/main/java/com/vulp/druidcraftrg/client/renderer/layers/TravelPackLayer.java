@@ -12,19 +12,21 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 // renders the travel pack on the player's back while it sits in the inventory unheld
 @OnlyIn(Dist.CLIENT)
 public class TravelPackLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
    private static final ResourceLocation REGULAR_PACK_TEX =
-      new ResourceLocation("druidcraftrg", "textures/entity/travel_pack/regular.png");
+      ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/entity/travel_pack/regular.png");
    private final TravelPackModel normalPack;
    private final TravelPackModel bedrollPack;
 
@@ -51,16 +53,16 @@ public class TravelPackLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
       if (pack.isEmpty()) {
          return;
       }
-      CompoundTag nbt = pack.getTag();
+      CompoundTag nbt = pack.has(DataComponents.CUSTOM_DATA) ? pack.get(DataComponents.CUSTOM_DATA).copyTag() : null;
       DyeColor bedrollColor = nbt != null && nbt.contains("Color") && nbt.getInt("Color") != -1
          ? DyeColor.byId(nbt.getInt("Color")) : null;
       TravelPackModel model = bedrollColor == null ? this.normalPack : this.bedrollPack;
       ResourceLocation texture = bedrollColor == null ? REGULAR_PACK_TEX
-         : new ResourceLocation("druidcraftrg", "textures/entity/travel_pack/bedrolled_" + bedrollColor.getName() + ".png");
+         : ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/entity/travel_pack/bedrolled_" + bedrollColor.getName() + ".png");
       poseStack.pushPose();
       this.getParentModel().body.translateAndRotate(poseStack);
       model.renderToBuffer(poseStack, buffer.getBuffer(RenderType.entityCutoutNoCull(texture)),
-         packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+         packedLight, OverlayTexture.NO_OVERLAY, -1);
       poseStack.popPose();
    }
 }

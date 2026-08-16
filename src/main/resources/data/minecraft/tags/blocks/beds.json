@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "druidcraftrg:white_bedroll",
+    "druidcraftrg:orange_bedroll",
+    "druidcraftrg:magenta_bedroll",
+    "druidcraftrg:light_blue_bedroll",
+    "druidcraftrg:yellow_bedroll",
+    "druidcraftrg:lime_bedroll",
+    "druidcraftrg:pink_bedroll",
+    "druidcraftrg:gray_bedroll",
+    "druidcraftrg:light_gray_bedroll",
+    "druidcraftrg:cyan_bedroll",
+    "druidcraftrg:purple_bedroll",
+    "druidcraftrg:blue_bedroll",
+    "druidcraftrg:brown_bedroll",
+    "druidcraftrg:green_bedroll",
+    "druidcraftrg:red_bedroll",
+    "druidcraftrg:black_bedroll"
+  ]
+}

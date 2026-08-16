@@ -1,0 +1,10 @@
+{
+  "type": "druidcraftrg:woodcutting",
+  "ingredient": {
+    "item": "druidcraftrg:darkwood_planks"
+  },
+  "result": {
+    "id": "druidcraftrg:darkwood_button",
+    "count": 4
+  }
+}

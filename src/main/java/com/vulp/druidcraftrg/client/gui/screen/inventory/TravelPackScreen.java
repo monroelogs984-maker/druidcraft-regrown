@@ -1,8 +1,8 @@
 package com.vulp.druidcraftrg.client.gui.screen.inventory;
 
 import com.vulp.druidcraftrg.inventory.container.TravelPackContainer;
-import com.vulp.druidcraftrg.network.PacketHandler;
 import com.vulp.druidcraftrg.network.message.DeployBedrollMessage;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 public class TravelPackScreen extends AbstractContainerScreen<TravelPackContainer> {
-   private static final ResourceLocation TRAVEL_PACK_GUI_TEXTURE = new ResourceLocation("druidcraftrg", "textures/gui/container/travel_pack.png");
+   private static final ResourceLocation TRAVEL_PACK_GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/gui/container/travel_pack.png");
    private PackButton bedrollButton;
 
    public TravelPackScreen(TravelPackContainer container, Inventory playerInv, Component title) {
@@ -45,7 +45,7 @@ public class TravelPackScreen extends AbstractContainerScreen<TravelPackContaine
 
    @Override
    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-      this.renderBackground(graphics);
+      this.renderBackground(graphics, mouseX, mouseY, partialTick);
       super.render(graphics, mouseX, mouseY, partialTick);
       this.renderTooltip(graphics, mouseX, mouseY);
    }
@@ -68,7 +68,7 @@ public class TravelPackScreen extends AbstractContainerScreen<TravelPackContaine
          if (minecraft != null && minecraft.player != null) {
             int playerId = minecraft.player.getId();
             TravelPackScreen.this.onClose();
-            PacketHandler.instance.sendToServer(new DeployBedrollMessage(playerId));
+            PacketDistributor.sendToServer(new DeployBedrollMessage(playerId));
          }
       }
    }

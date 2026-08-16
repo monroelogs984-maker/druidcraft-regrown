@@ -30,7 +30,7 @@ public class KnifeItem extends Item {
       return block instanceof IKnifeable ? ((IKnifeable)block).onKnifed(context.getPlayer(), world, pos, state, context) : super.onItemUseFirst(stack, context);
    }
 
-   public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> text, TooltipFlag flag) {
+   public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> text, TooltipFlag flag) {
       text.add(Component.translatable("item.druidcraftrg.knife.desc").withStyle(ChatFormatting.GRAY));
    }
 }

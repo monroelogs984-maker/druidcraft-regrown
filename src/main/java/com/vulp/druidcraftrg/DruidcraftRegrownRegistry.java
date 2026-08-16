@@ -28,7 +28,7 @@ import com.vulp.druidcraftrg.blocks.trees.ElderTreeGrower;
 import com.vulp.druidcraftrg.blocks.WetMudBlock;
 import com.vulp.druidcraftrg.blocks.WoodBlock;
 import com.vulp.druidcraftrg.blocks.LunarMothJarBlock;
-import com.vulp.druidcraftrg.capabilities.TempSpawnCapability;
+import com.vulp.druidcraftrg.capabilities.SpawnDataHolder;
 import com.vulp.druidcraftrg.entities.BeetleEntity;
 import com.vulp.druidcraftrg.entities.DreadfishEntity;
 import com.vulp.druidcraftrg.entities.LunarMothColors;
@@ -64,6 +64,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BedItem;
+import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DoubleHighBlockItem;
@@ -103,22 +104,38 @@ import net.minecraft.world.level.block.entity.BlockEntityType.Builder;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraftforge.common.ForgeSpawnEggItem;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.EventBusSubscriber.Bus;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
-@EventBusSubscriber(
-   bus = Bus.MOD
-)
+@EventBusSubscriber(modid = DruidcraftRegrown.MODID, bus = Bus.MOD)
 public class DruidcraftRegrownRegistry {
+
+   public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
+      DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, DruidcraftRegrown.MODID);
+   @SuppressWarnings("unused")
+   public static final java.util.function.Supplier<AttachmentType<SpawnDataHolder>> TEMP_SPAWN =
+      ATTACHMENT_TYPES.register("temp_spawn", () ->
+         AttachmentType.builder(() -> SpawnDataHolder.EMPTY)
+            .serialize(SpawnDataHolder.CODEC)
+            .copyOnDeath()
+            .build());
+
+   public static void register(IEventBus bus) {
+      ATTACHMENT_TYPES.register(bus);
+      ArmorMaterialInit.ARMOR_MATERIALS.register(bus);
+   }
+
    @SubscribeEvent
-   public static void register(RegisterEvent event) {
-      event.register(ForgeRegistries.Keys.BLOCKS, helper -> {
+   public static void registerAll(RegisterEvent event) {
+      event.register(Registries.BLOCK, helper -> {
          helper.register(location("hemp_crop"), BlockInit.hemp_crop = new DoubleCropBlock(
             7.0,
             () -> ItemInit.hemp_seeds,
@@ -161,13 +178,13 @@ public class DruidcraftRegrownRegistry {
 
          // M1: 1.16.5 materials
          helper.register(location("amber_ore"), BlockInit.amber_ore = new DropExperienceBlock(
-            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(3.0F), UniformInt.of(3, 6)));
+            UniformInt.of(3, 6), BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(3.0F)));
          helper.register(location("moonstone_ore"), BlockInit.moonstone_ore = new DropExperienceBlock(
-            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(3.0F), UniformInt.of(3, 7)));
+            UniformInt.of(3, 7), BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(3.0F)));
          helper.register(location("fiery_glass_ore"), BlockInit.fiery_glass_ore = new DropExperienceBlock(
-            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(3.0F), UniformInt.of(2, 5)));
+            UniformInt.of(2, 5), BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(3.0F)));
          helper.register(location("rockroot_ore"), BlockInit.rockroot_ore = new DropExperienceBlock(
-            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(3.0F), UniformInt.of(1, 5)));
+            UniformInt.of(1, 5), BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(3.0F)));
          helper.register(location("amber_block"), BlockInit.amber_block = new Block(
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_ORANGE).strength(3.0F).requiresCorrectToolForDrops().noOcclusion().sound(SoundType.STONE)));
          helper.register(location("moonstone_block"), BlockInit.moonstone_block = new Block(
@@ -181,7 +198,7 @@ public class DruidcraftRegrownRegistry {
          helper.register(location("dry_mud_brick_slab"), BlockInit.dry_mud_brick_slab = new SlabBlock(
             BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).requiresCorrectToolForDrops().sound(SoundType.STONE).strength(2.0F, 4.0F)));
          helper.register(location("dry_mud_brick_stairs"), BlockInit.dry_mud_brick_stairs = new StairBlock(
-            () -> BlockInit.dry_mud_bricks.defaultBlockState(),
+            BlockInit.dry_mud_bricks.defaultBlockState(),
             BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).requiresCorrectToolForDrops().sound(SoundType.STONE).strength(2.0F, 4.0F)));
          helper.register(location("dry_mud_brick_wall"), BlockInit.dry_mud_brick_wall = new WallBlock(
             BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).requiresCorrectToolForDrops().sound(SoundType.STONE).strength(2.0F, 4.0F)));
@@ -194,20 +211,20 @@ public class DruidcraftRegrownRegistry {
          helper.register(location("darkwood_wood"), BlockInit.darkwood_wood = new WoodBlock(() -> ItemInit.darkwood_log, () -> BlockInit.stripped_darkwood_wood, logProps()));
          helper.register(location("stripped_darkwood_wood"), BlockInit.stripped_darkwood_wood = new RotatedPillarBlock(logProps()));
          helper.register(location("darkwood_leaves"), BlockInit.darkwood_leaves = new LeavesBlock(leavesProps()));
-         helper.register(location("darkwood_sapling"), BlockInit.darkwood_sapling = new SaplingBlock(new DarkwoodTreeGrower(), saplingProps()));
+         helper.register(location("darkwood_sapling"), BlockInit.darkwood_sapling = new SaplingBlock(DarkwoodTreeGrower.INSTANCE, saplingProps()));
          helper.register(location("potted_darkwood_sapling"), BlockInit.potted_darkwood_sapling = new FlowerPotBlock(
             () -> (FlowerPotBlock) Blocks.FLOWER_POT, () -> BlockInit.darkwood_sapling,
             BlockBehaviour.Properties.of().instabreak().noOcclusion().pushReaction(PushReaction.DESTROY)));
          helper.register(location("darkwood_planks"), BlockInit.darkwood_planks = new Block(planksProps()));
          helper.register(location("darkwood_slab"), BlockInit.darkwood_slab = new SlabBlock(planksProps()));
-         helper.register(location("darkwood_stairs"), BlockInit.darkwood_stairs = new StairBlock(() -> BlockInit.darkwood_planks.defaultBlockState(), planksProps()));
+         helper.register(location("darkwood_stairs"), BlockInit.darkwood_stairs = new StairBlock(BlockInit.darkwood_planks.defaultBlockState(), planksProps()));
          helper.register(location("darkwood_fence"), BlockInit.darkwood_fence = new FenceBlock(planksProps()));
-         helper.register(location("darkwood_fence_gate"), BlockInit.darkwood_fence_gate = new FenceGateBlock(planksProps(), WoodTypeInit.DARKWOOD));
+         helper.register(location("darkwood_fence_gate"), BlockInit.darkwood_fence_gate = new FenceGateBlock(WoodTypeInit.DARKWOOD, planksProps()));
          helper.register(location("darkwood_pressure_plate"), BlockInit.darkwood_pressure_plate = new PressurePlateBlock(
-            PressurePlateBlock.Sensitivity.EVERYTHING, plateProps(), WoodTypeInit.DARKWOOD_SET));
-         helper.register(location("darkwood_button"), BlockInit.darkwood_button = new ButtonBlock(buttonProps(), WoodTypeInit.DARKWOOD_SET, 30, true));
-         helper.register(location("darkwood_trapdoor"), BlockInit.darkwood_trapdoor = new TrapDoorBlock(trapdoorProps(), WoodTypeInit.DARKWOOD_SET));
-         helper.register(location("darkwood_door"), BlockInit.darkwood_door = new DoorBlock(doorProps(), WoodTypeInit.DARKWOOD_SET));
+            WoodTypeInit.DARKWOOD_SET, plateProps()));
+         helper.register(location("darkwood_button"), BlockInit.darkwood_button = new ButtonBlock(WoodTypeInit.DARKWOOD_SET, 30, buttonProps()));
+         helper.register(location("darkwood_trapdoor"), BlockInit.darkwood_trapdoor = new TrapDoorBlock(WoodTypeInit.DARKWOOD_SET, trapdoorProps()));
+         helper.register(location("darkwood_door"), BlockInit.darkwood_door = new DoorBlock(WoodTypeInit.DARKWOOD_SET, doorProps()));
 
          // M2: 1.16.5 wood sets — elder
          helper.register(location("elder_log"), BlockInit.elder_log = new StrippablePillarBlock(() -> BlockInit.stripped_elder_log, logProps()));
@@ -215,20 +232,20 @@ public class DruidcraftRegrownRegistry {
          helper.register(location("elder_wood"), BlockInit.elder_wood = new WoodBlock(() -> ItemInit.elder_log, () -> BlockInit.stripped_elder_wood, logProps()));
          helper.register(location("stripped_elder_wood"), BlockInit.stripped_elder_wood = new RotatedPillarBlock(logProps()));
          helper.register(location("elder_leaves"), BlockInit.elder_leaves = new ElderLeavesBlock(leavesProps()));
-         helper.register(location("elder_sapling"), BlockInit.elder_sapling = new SaplingBlock(new ElderTreeGrower(), saplingProps()));
+         helper.register(location("elder_sapling"), BlockInit.elder_sapling = new SaplingBlock(ElderTreeGrower.INSTANCE, saplingProps()));
          helper.register(location("potted_elder_sapling"), BlockInit.potted_elder_sapling = new FlowerPotBlock(
             () -> (FlowerPotBlock) Blocks.FLOWER_POT, () -> BlockInit.elder_sapling,
             BlockBehaviour.Properties.of().instabreak().noOcclusion().pushReaction(PushReaction.DESTROY)));
          helper.register(location("elder_planks"), BlockInit.elder_planks = new Block(planksProps()));
          helper.register(location("elder_slab"), BlockInit.elder_slab = new SlabBlock(planksProps()));
-         helper.register(location("elder_stairs"), BlockInit.elder_stairs = new StairBlock(() -> BlockInit.elder_planks.defaultBlockState(), planksProps()));
+         helper.register(location("elder_stairs"), BlockInit.elder_stairs = new StairBlock(BlockInit.elder_planks.defaultBlockState(), planksProps()));
          helper.register(location("elder_fence"), BlockInit.elder_fence = new FenceBlock(planksProps()));
-         helper.register(location("elder_fence_gate"), BlockInit.elder_fence_gate = new FenceGateBlock(planksProps(), WoodTypeInit.ELDER));
+         helper.register(location("elder_fence_gate"), BlockInit.elder_fence_gate = new FenceGateBlock(WoodTypeInit.ELDER, planksProps()));
          helper.register(location("elder_pressure_plate"), BlockInit.elder_pressure_plate = new PressurePlateBlock(
-            PressurePlateBlock.Sensitivity.EVERYTHING, plateProps(), WoodTypeInit.ELDER_SET));
-         helper.register(location("elder_button"), BlockInit.elder_button = new ButtonBlock(buttonProps(), WoodTypeInit.ELDER_SET, 30, true));
-         helper.register(location("elder_trapdoor"), BlockInit.elder_trapdoor = new TrapDoorBlock(trapdoorProps(), WoodTypeInit.ELDER_SET));
-         helper.register(location("elder_door"), BlockInit.elder_door = new DoorBlock(doorProps(), WoodTypeInit.ELDER_SET));
+            WoodTypeInit.ELDER_SET, plateProps()));
+         helper.register(location("elder_button"), BlockInit.elder_button = new ButtonBlock(WoodTypeInit.ELDER_SET, 30, buttonProps()));
+         helper.register(location("elder_trapdoor"), BlockInit.elder_trapdoor = new TrapDoorBlock(WoodTypeInit.ELDER_SET, trapdoorProps()));
+         helper.register(location("elder_door"), BlockInit.elder_door = new DoorBlock(WoodTypeInit.ELDER_SET, doorProps()));
 
          // M2: 1.16.5 beams & panels
          BlockInit.oak_beam = registerBeam(helper, "oak_beam");
@@ -251,7 +268,7 @@ public class DruidcraftRegrownRegistry {
 
          // M3: 1.16.5 plants & food
          helper.register(location("lavender"), BlockInit.lavender = new FlowerBlock(
-            () -> MobEffects.DIG_SPEED, 8,
+            MobEffects.DIG_SPEED, 8,
             BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak()
                .sound(SoundType.GRASS).offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(PushReaction.DESTROY)));
          helper.register(location("potted_lavender"), BlockInit.potted_lavender = new FlowerPotBlock(
@@ -312,7 +329,7 @@ public class DruidcraftRegrownRegistry {
          DruidcraftRegrown.LOGGER.info("Blocks Registered!");
       });
 
-      event.register(ForgeRegistries.Keys.ITEMS, helper -> {
+      event.register(Registries.ITEM, helper -> {
          helper.register(location("knife"), ItemInit.knife = new KnifeItem(new Properties().stacksTo(1)));
          helper.register(location("hemp"), ItemInit.hemp = new Item(new Properties()));
          helper.register(location("hemp_seeds"), ItemInit.hemp_seeds = new DoubleCropSeedItem(BlockInit.hemp_crop, new Properties()));
@@ -343,30 +360,30 @@ public class DruidcraftRegrownRegistry {
          helper.register(location("fiery_glass"), ItemInit.fiery_glass = new Item(new Properties()));
          helper.register(location("rockroot"), ItemInit.rockroot = new Item(new Properties()));
          helper.register(location("chitin"), ItemInit.chitin = new Item(new Properties()));
-         helper.register(location("bone_sword"), ItemInit.bone_sword = new SwordItem(TierInit.bone, 3, -2.4F, new Properties()));
-         helper.register(location("bone_shovel"), ItemInit.bone_shovel = new ShovelItem(TierInit.bone, 1.5F, -3.0F, new Properties()));
-         helper.register(location("bone_pickaxe"), ItemInit.bone_pickaxe = new PickaxeItem(TierInit.bone, 1, -2.8F, new Properties()));
-         helper.register(location("bone_axe"), ItemInit.bone_axe = new AxeItem(TierInit.bone, 7.0F, -3.2F, new Properties()));
-         helper.register(location("bone_hoe"), ItemInit.bone_hoe = new HoeItem(TierInit.bone, 1, -2.0F, new Properties()));
+         helper.register(location("bone_sword"), ItemInit.bone_sword = new SwordItem(TierInit.bone, new Properties().attributes(SwordItem.createAttributes(TierInit.bone, 3, -2.4F))));
+         helper.register(location("bone_shovel"), ItemInit.bone_shovel = new ShovelItem(TierInit.bone, new Properties().attributes(DiggerItem.createAttributes(TierInit.bone, 1.5F, -3.0F))));
+         helper.register(location("bone_pickaxe"), ItemInit.bone_pickaxe = new PickaxeItem(TierInit.bone, new Properties().attributes(DiggerItem.createAttributes(TierInit.bone, 1.0F, -2.8F))));
+         helper.register(location("bone_axe"), ItemInit.bone_axe = new AxeItem(TierInit.bone, new Properties().attributes(DiggerItem.createAttributes(TierInit.bone, 6.0F, -3.1F))));
+         helper.register(location("bone_hoe"), ItemInit.bone_hoe = new HoeItem(TierInit.bone, new Properties().attributes(DiggerItem.createAttributes(TierInit.bone, -1.0F, -2.0F))));
          helper.register(location("bone_sickle"), ItemInit.bone_sickle = new SickleItem(-1.0F, -1.5F, TierInit.bone, 2, new Properties()));
-         helper.register(location("bone_helmet"), ItemInit.bone_helmet = new ArmorItem(ArmorMaterialInit.bone, ArmorItem.Type.HELMET, new Properties()));
-         helper.register(location("bone_chestplate"), ItemInit.bone_chestplate = new ArmorItem(ArmorMaterialInit.bone, ArmorItem.Type.CHESTPLATE, new Properties()));
-         helper.register(location("bone_leggings"), ItemInit.bone_leggings = new ArmorItem(ArmorMaterialInit.bone, ArmorItem.Type.LEGGINGS, new Properties()));
-         helper.register(location("bone_boots"), ItemInit.bone_boots = new ArmorItem(ArmorMaterialInit.bone, ArmorItem.Type.BOOTS, new Properties()));
-         helper.register(location("chitin_helmet"), ItemInit.chitin_helmet = new ArmorItem(ArmorMaterialInit.chitin, ArmorItem.Type.HELMET, new Properties()));
-         helper.register(location("chitin_chestplate"), ItemInit.chitin_chestplate = new ArmorItem(ArmorMaterialInit.chitin, ArmorItem.Type.CHESTPLATE, new Properties()));
-         helper.register(location("chitin_leggings"), ItemInit.chitin_leggings = new ArmorItem(ArmorMaterialInit.chitin, ArmorItem.Type.LEGGINGS, new Properties()));
-         helper.register(location("chitin_boots"), ItemInit.chitin_boots = new ArmorItem(ArmorMaterialInit.chitin, ArmorItem.Type.BOOTS, new Properties()));
-         helper.register(location("moonstone_sword"), ItemInit.moonstone_sword = new SwordItem(TierInit.moonstone, 3, -2.4F, new Properties()));
-         helper.register(location("moonstone_shovel"), ItemInit.moonstone_shovel = new ShovelItem(TierInit.moonstone, 1.5F, -3.0F, new Properties()));
-         helper.register(location("moonstone_pickaxe"), ItemInit.moonstone_pickaxe = new PickaxeItem(TierInit.moonstone, 1, -2.8F, new Properties()));
-         helper.register(location("moonstone_axe"), ItemInit.moonstone_axe = new AxeItem(TierInit.moonstone, 7.0F, -3.2F, new Properties()));
-         helper.register(location("moonstone_hoe"), ItemInit.moonstone_hoe = new HoeItem(TierInit.moonstone, 0, -2.0F, new Properties()));
+         helper.register(location("bone_helmet"), ItemInit.bone_helmet = new ArmorItem(ArmorMaterialInit.bone, ArmorItem.Type.HELMET, new Properties().durability(132)));
+         helper.register(location("bone_chestplate"), ItemInit.bone_chestplate = new ArmorItem(ArmorMaterialInit.bone, ArmorItem.Type.CHESTPLATE, new Properties().durability(192)));
+         helper.register(location("bone_leggings"), ItemInit.bone_leggings = new ArmorItem(ArmorMaterialInit.bone, ArmorItem.Type.LEGGINGS, new Properties().durability(180)));
+         helper.register(location("bone_boots"), ItemInit.bone_boots = new ArmorItem(ArmorMaterialInit.bone, ArmorItem.Type.BOOTS, new Properties().durability(156)));
+         helper.register(location("chitin_helmet"), ItemInit.chitin_helmet = new ArmorItem(ArmorMaterialInit.chitin, ArmorItem.Type.HELMET, new Properties().durability(220)));
+         helper.register(location("chitin_chestplate"), ItemInit.chitin_chestplate = new ArmorItem(ArmorMaterialInit.chitin, ArmorItem.Type.CHESTPLATE, new Properties().durability(320)));
+         helper.register(location("chitin_leggings"), ItemInit.chitin_leggings = new ArmorItem(ArmorMaterialInit.chitin, ArmorItem.Type.LEGGINGS, new Properties().durability(300)));
+         helper.register(location("chitin_boots"), ItemInit.chitin_boots = new ArmorItem(ArmorMaterialInit.chitin, ArmorItem.Type.BOOTS, new Properties().durability(260)));
+         helper.register(location("moonstone_sword"), ItemInit.moonstone_sword = new SwordItem(TierInit.moonstone, new Properties().attributes(SwordItem.createAttributes(TierInit.moonstone, 3, -2.4F))));
+         helper.register(location("moonstone_shovel"), ItemInit.moonstone_shovel = new ShovelItem(TierInit.moonstone, new Properties().attributes(DiggerItem.createAttributes(TierInit.moonstone, 1.5F, -3.0F))));
+         helper.register(location("moonstone_pickaxe"), ItemInit.moonstone_pickaxe = new PickaxeItem(TierInit.moonstone, new Properties().attributes(DiggerItem.createAttributes(TierInit.moonstone, 1.0F, -2.8F))));
+         helper.register(location("moonstone_axe"), ItemInit.moonstone_axe = new AxeItem(TierInit.moonstone, new Properties().attributes(DiggerItem.createAttributes(TierInit.moonstone, 5.0F, -3.0F))));
+         helper.register(location("moonstone_hoe"), ItemInit.moonstone_hoe = new HoeItem(TierInit.moonstone, new Properties().attributes(DiggerItem.createAttributes(TierInit.moonstone, 0.0F, -3.0F))));
          helper.register(location("moonstone_sickle"), ItemInit.moonstone_sickle = new SickleItem(0.0F, -1.5F, TierInit.moonstone, 4, new Properties()));
-         helper.register(location("moonstone_helmet"), ItemInit.moonstone_helmet = new ArmorItem(ArmorMaterialInit.moonstone, ArmorItem.Type.HELMET, new Properties()));
-         helper.register(location("moonstone_chestplate"), ItemInit.moonstone_chestplate = new ArmorItem(ArmorMaterialInit.moonstone, ArmorItem.Type.CHESTPLATE, new Properties()));
-         helper.register(location("moonstone_leggings"), ItemInit.moonstone_leggings = new ArmorItem(ArmorMaterialInit.moonstone, ArmorItem.Type.LEGGINGS, new Properties()));
-         helper.register(location("moonstone_boots"), ItemInit.moonstone_boots = new ArmorItem(ArmorMaterialInit.moonstone, ArmorItem.Type.BOOTS, new Properties()));
+         helper.register(location("moonstone_helmet"), ItemInit.moonstone_helmet = new ArmorItem(ArmorMaterialInit.moonstone, ArmorItem.Type.HELMET, new Properties().durability(385)));
+         helper.register(location("moonstone_chestplate"), ItemInit.moonstone_chestplate = new ArmorItem(ArmorMaterialInit.moonstone, ArmorItem.Type.CHESTPLATE, new Properties().durability(560)));
+         helper.register(location("moonstone_leggings"), ItemInit.moonstone_leggings = new ArmorItem(ArmorMaterialInit.moonstone, ArmorItem.Type.LEGGINGS, new Properties().durability(525)));
+         helper.register(location("moonstone_boots"), ItemInit.moonstone_boots = new ArmorItem(ArmorMaterialInit.moonstone, ArmorItem.Type.BOOTS, new Properties().durability(455)));
          helper.register(location("wooden_sickle"), ItemInit.wooden_sickle = new SickleItem(0.0F, -1.5F, Tiers.WOOD, 1, new Properties()));
          helper.register(location("stone_sickle"), ItemInit.stone_sickle = new SickleItem(0.0F, -1.5F, Tiers.STONE, 2, new Properties()));
          helper.register(location("iron_sickle"), ItemInit.iron_sickle = new SickleItem(0.0F, -1.5F, Tiers.IRON, 3, new Properties()));
@@ -474,11 +491,11 @@ public class DruidcraftRegrownRegistry {
 
          // M5: 1.16.5 entities — spawn eggs, moth jars, moth eggs
          helper.register(location("dreadfish_spawn_egg"), ItemInit.dreadfish_spawn_egg =
-            new ForgeSpawnEggItem(() -> EntityInit.dreadfish, 0xE2E2D9, 0xA775FF, new Properties()));
+            new DeferredSpawnEggItem(() -> EntityInit.dreadfish, 0xE2E2D9, 0xA775FF, new Properties()));
          helper.register(location("beetle_spawn_egg"), ItemInit.beetle_spawn_egg =
-            new ForgeSpawnEggItem(() -> EntityInit.beetle, 0x57E5DC, 0x227589, new Properties()));
+            new DeferredSpawnEggItem(() -> EntityInit.beetle, 0x57E5DC, 0x227589, new Properties()));
          helper.register(location("lunar_moth_spawn_egg"), ItemInit.lunar_moth_spawn_egg =
-            new ForgeSpawnEggItem(() -> EntityInit.lunar_moth, 0x4AFFC2, 0x00CE89, new Properties()));
+            new DeferredSpawnEggItem(() -> EntityInit.lunar_moth, 0x4AFFC2, 0x00CE89, new Properties()));
          helper.register(location("turquoise_lunar_moth_jar"), ItemInit.lunar_moth_jar_turquoise =
             new LunarMothJarItem(BlockInit.turquoise_lunar_moth_jar, LunarMothColors.TURQUOISE, new Properties()));
          helper.register(location("white_lunar_moth_jar"), ItemInit.lunar_moth_jar_white =
@@ -507,7 +524,7 @@ public class DruidcraftRegrownRegistry {
          DruidcraftRegrown.LOGGER.info("Items Registered!");
       });
 
-      event.register(ForgeRegistries.Keys.BLOCK_ENTITY_TYPES, helper -> {
+      event.register(Registries.BLOCK_ENTITY_TYPE, helper -> {
          helper.register(location("rope"), BlockEntityInit.rope = BlockEntityInit.build(Builder.of(RopeTileEntity::new, BlockInit.rope)));
          helper.register(location("beam"), BlockEntityInit.beam = BlockEntityInit.build(Builder.of(BeamTileEntity::new, BlockInit.beam)));
          helper.register(location("crate"), BlockEntityInit.crate = BlockEntityInit.build(Builder.of(CrateTileEntity::new, BlockInit.oak_crate)));
@@ -515,7 +532,7 @@ public class DruidcraftRegrownRegistry {
          DruidcraftRegrown.LOGGER.info("Tile Entities Registered!");
       });
 
-      event.register(ForgeRegistries.Keys.MENU_TYPES, helper -> {
+      event.register(Registries.MENU, helper -> {
          helper.register(location("crate_9x3"), ContainerInit.CRATE_9x3);
          helper.register(location("crate_9x6"), ContainerInit.CRATE_9x6);
          helper.register(location("crate_9x12"), ContainerInit.CRATE_9x12);
@@ -526,7 +543,7 @@ public class DruidcraftRegrownRegistry {
          DruidcraftRegrown.LOGGER.info("Containers Registered!");
       });
 
-      event.register(ForgeRegistries.Keys.ENTITY_TYPES, helper -> {
+      event.register(Registries.ENTITY_TYPE, helper -> {
          helper.register(location("dreadfish"), EntityInit.dreadfish =
             EntityType.Builder.of(DreadfishEntity::new, MobCategory.MONSTER).sized(0.8F, 0.4F)
                .setShouldReceiveVelocityUpdates(true).setUpdateInterval(3).build("druidcraftrg:dreadfish"));
@@ -539,14 +556,14 @@ public class DruidcraftRegrownRegistry {
          DruidcraftRegrown.LOGGER.info("Entities Registered!");
       });
 
-      event.register(ForgeRegistries.Keys.SOUND_EVENTS, helper -> {
+      event.register(Registries.SOUND_EVENT, helper -> {
          helper.register(location("fill_bottle"), SoundEventInit.fill_bottle);
          helper.register(location("open_crate"), SoundEventInit.open_crate);
          helper.register(location("close_crate"), SoundEventInit.close_crate);
          helper.register(location("woodcutter_take_result"), SoundEventInit.woodcutter_take_result);
       });
 
-      event.register(ForgeRegistries.Keys.PARTICLE_TYPES, helper -> {
+      event.register(Registries.PARTICLE_TYPE, helper -> {
          helper.register(location("magic_smoke"), ParticleInit.magic_smoke);
          helper.register(location("fiery_glow"), ParticleInit.fiery_glow);
          helper.register(location("fiery_spark"), ParticleInit.fiery_spark);
@@ -554,13 +571,13 @@ public class DruidcraftRegrownRegistry {
          DruidcraftRegrown.LOGGER.info("Particles Registered!");
       });
 
-      event.register(ForgeRegistries.Keys.RECIPE_TYPES, helper ->
+      event.register(Registries.RECIPE_TYPE, helper ->
          helper.register(location("woodcutting"), RecipeInit.WOODCUTTING_TYPE));
 
-      event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS, helper ->
+      event.register(Registries.RECIPE_SERIALIZER, helper ->
          helper.register(location("woodcutting"), RecipeInit.WOODCUTTING_SERIALIZER));
 
-      event.register(ForgeRegistries.Keys.FEATURES, helper -> {
+      event.register(Registries.FEATURE, helper -> {
          helper.register(location("hemp"), FeatureInit.hemp);
          helper.register(location("elder_tree"), FeatureInit.elder_tree);
          DruidcraftRegrown.LOGGER.info("Features Registered!");
@@ -751,6 +768,7 @@ public class DruidcraftRegrownRegistry {
          .isValidSpawn((state, level, pos, type) -> false)
          .isSuffocating((state, level, pos) -> false)
          .isViewBlocking((state, level, pos) -> false)
+         .isRedstoneConductor((state, level, pos) -> false)
          .ignitedByLava().pushReaction(PushReaction.DESTROY);
    }
 
@@ -836,13 +854,7 @@ public class DruidcraftRegrownRegistry {
       DruidcraftRegrown.LOGGER.info("Entity Attributes Registered!");
    }
 
-   @SubscribeEvent
-   public static void capabilityRegistryEvent(RegisterCapabilitiesEvent event) {
-      event.register(TempSpawnCapability.class);
-      DruidcraftRegrown.LOGGER.info("Capabilities Registered!");
-   }
-
    public static ResourceLocation location(String name) {
-      return new ResourceLocation("druidcraftrg", name);
+      return ResourceLocation.fromNamespaceAndPath("druidcraftrg", name);
    }
 }

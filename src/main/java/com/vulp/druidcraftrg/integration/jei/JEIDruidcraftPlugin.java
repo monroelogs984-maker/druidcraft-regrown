@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 
 @JeiPlugin
 public class JEIDruidcraftPlugin implements IModPlugin {
-   private static final ResourceLocation UID = new ResourceLocation("druidcraftrg", "main");
+   private static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "main");
 
    @Override
    public ResourceLocation getPluginUid() {
@@ -28,7 +28,8 @@ public class JEIDruidcraftPlugin implements IModPlugin {
    @Override
    public void registerRecipes(IRecipeRegistration registration) {
       registration.addRecipes(WoodcuttingCategory.WOODCUTTING,
-         Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeInit.WOODCUTTING_TYPE));
+         Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeInit.WOODCUTTING_TYPE)
+            .stream().map(net.minecraft.world.item.crafting.RecipeHolder::value).toList());
    }
 
    @Override

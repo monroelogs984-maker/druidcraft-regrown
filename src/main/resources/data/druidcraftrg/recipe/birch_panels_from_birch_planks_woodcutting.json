@@ -1,0 +1,9 @@
+{
+  "type": "druidcraftrg:woodcutting",
+  "ingredient": {
+    "item": "minecraft:birch_planks"
+  },
+  "result": {
+    "id": "druidcraftrg:birch_panels"
+  }
+}

@@ -28,8 +28,8 @@ public class BeamTileEntity extends BlockEntity {
       super(blockEntityType, pos, state);
    }
 
-   public void saveAdditional(CompoundTag compound) {
-      super.saveAdditional(compound);
+   public void saveAdditional(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries) {
+      super.saveAdditional(compound, registries);
       if (this.lashingAxis != null) {
          compound.putInt("Axis", this.lashingAxis.ordinal());
       } else {
@@ -41,8 +41,8 @@ public class BeamTileEntity extends BlockEntity {
       compound.putIntArray("Dir", directions);
    }
 
-   public void load(CompoundTag compound) {
-      super.load(compound);
+   public void loadAdditional(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries) {
+      super.loadAdditional(compound, registries);
       this.lashingAxis = compound.contains("Axis") ? Axis.values()[compound.getInt("Axis")] : null;
       int[] directions = compound.getIntArray("Dir");
       this.ropeDirections = new ArrayList<>(Collections.emptyList());
@@ -61,13 +61,13 @@ public class BeamTileEntity extends BlockEntity {
 
    public CompoundTag getUpdateTag() {
       CompoundTag nbtTagCompound = new CompoundTag();
-      this.saveAdditional(nbtTagCompound);
+      this.saveAdditional(nbtTagCompound, this.level.registryAccess());
       return nbtTagCompound;
    }
 
-   public void handleUpdateTag(CompoundTag tag) {
-      this.load(tag);
-      super.handleUpdateTag(tag);
+   public void handleUpdateTag(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+      this.loadAdditional(tag, this.level != null ? this.level.registryAccess() : net.minecraft.core.RegistryAccess.EMPTY);
+      super.handleUpdateTag(tag, registries);
    }
 
    @Nullable

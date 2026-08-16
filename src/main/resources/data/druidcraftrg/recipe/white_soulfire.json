@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "soulfire",
+  "ingredients": [
+    {
+      "item": "minecraft:white_dye"
+    },
+    {
+      "tag": "druidcraftrg:soulfire"
+    }
+  ],
+  "result": {
+    "id": "druidcraftrg:white_soulfire"
+  }
+}

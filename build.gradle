@@ -1,79 +1,77 @@
 plugins {
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.spongepowered.mixin' version '0.7.+'
+    id 'net.neoforged.gradle.userdev' version '7.1.38'
 }
 
-version = '0.0.12-1.20.1'
+version = '0.0.12-1.21.1'
 group = 'com.vulp.druidcraftrg'
-archivesBaseName = 'druidcraftrg'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+base {
+    archivesName = 'druidcraftrg'
+}
 
-minecraft {
-    mappings channel: 'official', version: "${minecraft_version}"
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
 
-    runs {
-        client {
-            workingDirectory project.file('run')
-            property 'forge.logging.console.level', 'debug'
-            mods {
-                druidcraftrg { source sourceSets.main }
-            }
-        }
-        server {
-            workingDirectory project.file('run')
-            property 'forge.logging.console.level', 'debug'
-            mods {
-                druidcraftrg { source sourceSets.main }
-            }
-        }
+accessTransformers {
+    file('src/main/resources/META-INF/accesstransformer.cfg')
+}
+
+runs {
+    configureEach {
+        systemProperty 'neoforge.logging.markers', 'REGISTRIES'
+        systemProperty 'neoforge.logging.console.level', 'debug'
+        modSource project.sourceSets.main
     }
+    client {}
+    server {}
 }
 
 repositories {
-    maven { url 'https://maven.blamejared.com' } // JEI
+    flatDir { dirs 'libs' }
+    maven { url 'https://maven.blamejared.com' }
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-    // optional at runtime — darkwood forest biome injection (guarded by ModList.isLoaded)
-    implementation fg.deobf("com.github.glitchfiend:TerraBlender-forge:1.20.1-3.0.1.10")
-    // optional at runtime — plugin class is only loaded by JEI itself
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:15.20.0.134")
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:15.20.0.134")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:15.20.0.134")
-}
-
-mixin {
-    add sourceSets.main, 'druidcraftrg.refmap.json'
-    config 'druidcraftrg.mixins.json'
+    implementation "net.neoforged:neoforge:${neo_version}"
+    // Local jars (no network available during port) — replace with maven coords once online:
+    //   TerraBlender: com.github.glitchfiend:TerraBlender-neoforge:1.21.1-4.1.0.8
+    //   JEI: mezz.jei:jei-1.21.1-neoforge:19.27.0.336
+    implementation fileTree(dir: 'libs', include: ['TerraBlender-neoforge-1.21.1-4.1.0.8.jar'])
+    compileOnly fileTree(dir: 'libs', include: ['jei-1.21.1-neoforge-19.27.0.336.jar'])
+    runtimeOnly fileTree(dir: 'libs', include: ['jei-1.21.1-neoforge-19.27.0.336.jar'])
 }
 
 jar {
     manifest {
         attributes([
-            'Specification-Title'      : 'druidcraftrg',
-            'Specification-Vendor'     : 'VulpTheHorseDog',
-            'Specification-Version'    : '1',
-            'Implementation-Title'     : project.name,
-            'Implementation-Version'   : "${version}",
-            'Implementation-Vendor'    : 'VulpTheHorseDog',
-            'MixinConfigs'             : 'druidcraftrg.mixins.json'
+            'Specification-Title'     : 'druidcraftrg',
+            'Specification-Vendor'    : 'VulpTheHorseDog',
+            'Specification-Version'   : '1',
+            'Implementation-Title'    : project.name,
+            'Implementation-Version'  : "${version}",
+            'Implementation-Vendor'   : 'VulpTheHorseDog',
+            'MixinConfigs'            : 'druidcraftrg.mixins.json'
         ])
     }
 }
 
-jar.finalizedBy('reobfJar')
-
-task deploy {
+tasks.register('deploy', Copy) {
     dependsOn build
-    doLast {
-        copy {
-            from "build/libs/${archivesBaseName}-${version}.jar"
-            into '/home/glenn/Documents/curseforge/minecraft/Instances/1.20.1 (1)/mods'
-        }
-        println "[DEPLOY] druidcraftrg → 1.20.1 test instance"
+    from(layout.buildDirectory.dir('libs')) {
+        include "druidcraftrg-*.jar"
+        exclude "*-sources.jar"
     }
+    into '/home/glenn/Documents/curseforge/minecraft/Instances/S202 Neoforge/mods'
 }
+
+tasks.register('deployTest', Copy) {
+    dependsOn build
+    from(layout.buildDirectory.dir('libs')) {
+        include "druidcraftrg-*.jar"
+        exclude "*-sources.jar"
+    }
+    into '/home/glenn/Documents/curseforge/minecraft/Instances/1.21.1/mods'
+}
+
+deploy.finalizedBy deployTest

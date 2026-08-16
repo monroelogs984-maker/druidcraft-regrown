@@ -1,8 +1,0 @@
-{
-  "type": "druidcraftrg:woodcutting",
-  "ingredient": {
-    "item": "druidcraftrg:darkwood_log"
-  },
-  "result": "druidcraftrg:darkwood_beam",
-  "count": 1
-}

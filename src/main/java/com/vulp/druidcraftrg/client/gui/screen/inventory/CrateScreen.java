@@ -30,11 +30,11 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag.Default;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.client.event.ContainerScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.event.ContainerScreenEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 @OnlyIn(Dist.CLIENT)
 public class CrateScreen extends AbstractContainerScreen<CrateContainer> implements MenuAccess<CrateContainer> {
@@ -127,7 +127,7 @@ public class CrateScreen extends AbstractContainerScreen<CrateContainer> impleme
 
          for (Slot slot : ((CrateContainer)this.menu).slots) {
             if (!(slot.container instanceof Inventory) && slot.getItem().getItem() != Items.AIR) {
-               for (Component line : slot.getItem().getTooltipLines(this.minecraft.player, this.minecraft.options.advancedItemTooltips ? Default.ADVANCED : Default.NORMAL)) {
+               for (Component line : slot.getItem().getTooltipLines(net.minecraft.world.item.Item.TooltipContext.EMPTY, this.minecraft.player, this.minecraft.options.advancedItemTooltips ? Default.ADVANCED : Default.NORMAL)) {
                   if (ChatFormatting.stripFormatting(line.getString()).toLowerCase(Locale.ROOT).contains(search)) {
                      this.searchList.add(slot);
                      break;
@@ -140,7 +140,7 @@ public class CrateScreen extends AbstractContainerScreen<CrateContainer> impleme
 
    protected void containerTick() {
       if (this.searchBox != null) {
-         this.searchBox.tick();
+         this.searchBox.setTextColor(!this.searchBox.getValue().isEmpty() && this.searchList.isEmpty() ? 16711680 : 16777215);
       }
 
       super.containerTick();
@@ -148,7 +148,7 @@ public class CrateScreen extends AbstractContainerScreen<CrateContainer> impleme
 
    public void render(GuiGraphics gfx, int mouseX, int mouseY, float delta) {
       this.renderBg(gfx, delta, mouseX, mouseY);
-      MinecraftForge.EVENT_BUS.post(new ContainerScreenEvent.Render.Background(this, gfx, mouseX, mouseY));
+      NeoForge.EVENT_BUS.post(new ContainerScreenEvent.Render.Background(this, gfx, mouseX, mouseY));
 
       for (Renderable widget : this.renderables) {
          widget.render(gfx, mouseX, mouseY, delta);
@@ -204,7 +204,7 @@ public class CrateScreen extends AbstractContainerScreen<CrateContainer> impleme
       this.renderLabels(gfx, mouseX, mouseY);
       this.searchBox.render(gfx, mouseX, mouseY, delta);
       gfx.pose().popPose();
-      MinecraftForge.EVENT_BUS.post(new ContainerScreenEvent.Render.Foreground(this, gfx, mouseX, mouseY));
+      NeoForge.EVENT_BUS.post(new ContainerScreenEvent.Render.Foreground(this, gfx, mouseX, mouseY));
       ItemStack currentStack = this.draggingItem.isEmpty() ? ((CrateContainer)this.menu).getCarried() : this.draggingItem;
       if (!currentStack.isEmpty()) {
          int i2 = this.draggingItem.isEmpty() ? 8 : 16;
@@ -464,7 +464,7 @@ public class CrateScreen extends AbstractContainerScreen<CrateContainer> impleme
 
    protected void slotClicked(@Nullable Slot slot, int slotNumber, int buttonNumber, ClickType clickType) {
       if (slot != null) {
-         this.searchBox.moveCursorToEnd();
+         this.searchBox.moveCursorToEnd(false);
          this.searchBox.setHighlightPos(0);
          if (slotNumber >= this.containerRows * 9
             & (slot.y < 0 || slot.y - 219 - (int)((float)this.scrollOffset * (((float)this.containerRows - 6.0F) / 6.0F)) > 124)) {
@@ -472,7 +472,7 @@ public class CrateScreen extends AbstractContainerScreen<CrateContainer> impleme
          }
       }
 
-      this.searchBox.moveCursorToEnd();
+      this.searchBox.moveCursorToEnd(false);
       this.searchBox.setHighlightPos(this.searchBox.getCursorPosition());
       this.minecraft.gameMode.handleInventoryMouseClick(((CrateContainer)this.menu).containerId, slotNumber, buttonNumber, clickType, this.minecraft.player);
       this.refreshSearchResults();
@@ -556,9 +556,5 @@ public class CrateScreen extends AbstractContainerScreen<CrateContainer> impleme
          super(fontRenderer, x, y, width, height, text);
       }
 
-      public void tick() {
-         super.tick();
-         this.setTextColor(!this.getValue().isEmpty() && CrateScreen.this.searchList.isEmpty() ? 16711680 : 16777215);
-      }
    }
 }

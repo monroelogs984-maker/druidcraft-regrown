@@ -7,7 +7,6 @@ import com.vulp.druidcraftrg.inventory.container.CrateContainer;
 import com.vulp.druidcraftrg.state.properties.CrateType;
 import java.util.Arrays;
 import java.util.List;
-import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -31,18 +30,16 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import javax.annotation.Nullable;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
 public class CrateTileEntity extends RandomizableContainerBlockEntity {
    private NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
    protected int lastOpenCount = 0;
    protected int openCount;
    private int tickInterval;
-   private LazyOptional<IItemHandlerModifiable> crateHandler;
+   @Nullable private IItemHandlerModifiable crateHandler;
    private List<BlockPos> crateArray;
 
    protected CrateTileEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state) {
@@ -165,18 +162,18 @@ public class CrateTileEntity extends RandomizableContainerBlockEntity {
       }
    }
 
-   public void load(CompoundTag nbt) {
-      super.load(nbt);
+   public void loadAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+      super.loadAdditional(nbt, registries);
       this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
       if (!this.tryLoadLootTable(nbt)) {
-         ContainerHelper.loadAllItems(nbt, this.items);
+         ContainerHelper.loadAllItems(nbt, this.items, registries);
       }
    }
 
-   public void saveAdditional(CompoundTag nbt) {
-      super.saveAdditional(nbt);
+   public void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+      super.saveAdditional(nbt, registries);
       if (!this.trySaveLootTable(nbt)) {
-         ContainerHelper.saveAllItems(nbt, this.items);
+         ContainerHelper.saveAllItems(nbt, this.items, registries);
       }
    }
 
@@ -212,57 +209,34 @@ public class CrateTileEntity extends RandomizableContainerBlockEntity {
 
    public void clearContent() {
       super.clearContent();
-      if (this.crateHandler != null) {
-         LazyOptional<?> oldHandler = this.crateHandler;
+      this.crateHandler = null;
+   }
+
+   public IItemHandlerModifiable getItemHandler(Direction side) {
+      if (this.level == null) return new InvWrapper(this);
+      List<BlockPos> cratePositions = CrateBlock.getCratePosList(this.level, this.worldPosition);
+      if (this.crateArray == null || !this.crateArray.equals(cratePositions)) {
+         this.crateArray = cratePositions;
          this.crateHandler = null;
-         oldHandler.invalidate();
       }
+      if (this.crateHandler == null) {
+         this.crateHandler = buildHandler();
+      }
+      return this.crateHandler;
    }
 
-   public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-      if (this.remove || cap != ForgeCapabilities.ITEM_HANDLER) {
-         return super.getCapability(cap, side);
-      } else if (this.level == null) {
-         return LazyOptional.empty().cast();
-      } else {
-         List<BlockPos> cratePositions = CrateBlock.getCratePosList(this.level, this.worldPosition);
-         if (this.crateArray == null) {
-            this.crateArray = cratePositions;
-         } else if (this.crateArray != cratePositions) {
-            this.crateArray = cratePositions;
-         }
-
-         if (this.crateHandler == null) {
-            this.crateHandler = LazyOptional.of(this::createHandler);
-         }
-
-         return this.crateHandler.cast();
-      }
-   }
-
-   @Nonnull
-   private IItemHandlerModifiable createHandler() {
+   private IItemHandlerModifiable buildHandler() {
       BlockState state = this.getBlockState();
       if (!(state.getBlock() instanceof CrateBlock)) {
          return new InvWrapper(this);
-      } else {
-         CrateTileEntity[] tileList = new CrateTileEntity[this.crateArray.size()];
-         if (this.level != null) {
-            for (int i = 0; i < this.crateArray.size(); i++) {
-               tileList[i] = (CrateTileEntity)this.level.getBlockEntity(this.crateArray.get(i));
-            }
+      }
+      CrateTileEntity[] tileList = new CrateTileEntity[this.crateArray.size()];
+      if (this.level != null) {
+         for (int i = 0; i < this.crateArray.size(); i++) {
+            tileList[i] = (CrateTileEntity) this.level.getBlockEntity(this.crateArray.get(i));
          }
-
-         Container inv = new MultiSidedInventory(tileList);
-         return new InvWrapper(inv);
       }
-   }
-
-   public void invalidateCaps() {
-      super.invalidateCaps();
-      if (this.crateHandler != null) {
-         this.crateHandler.invalidate();
-      }
+      return new InvWrapper(new MultiSidedInventory(tileList));
    }
 
    public List<BlockPos> getCrateArray() {

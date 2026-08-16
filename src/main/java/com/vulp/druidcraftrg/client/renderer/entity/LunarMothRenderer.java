@@ -11,12 +11,12 @@ import net.minecraft.resources.ResourceLocation;
 
 public class LunarMothRenderer extends MobRenderer<LunarMothEntity, LunarMothModel<LunarMothEntity>> {
 
-   public static final ResourceLocation MOTH_TURQUOISE = new ResourceLocation("druidcraftrg", "textures/entity/lunar_moth/lunar_moth_turquoise.png");
-   public static final ResourceLocation MOTH_WHITE = new ResourceLocation("druidcraftrg", "textures/entity/lunar_moth/lunar_moth_white.png");
-   public static final ResourceLocation MOTH_LIME = new ResourceLocation("druidcraftrg", "textures/entity/lunar_moth/lunar_moth_lime.png");
-   public static final ResourceLocation MOTH_ORANGE = new ResourceLocation("druidcraftrg", "textures/entity/lunar_moth/lunar_moth_orange.png");
-   public static final ResourceLocation MOTH_PINK = new ResourceLocation("druidcraftrg", "textures/entity/lunar_moth/lunar_moth_pink.png");
-   public static final ResourceLocation MOTH_YELLOW = new ResourceLocation("druidcraftrg", "textures/entity/lunar_moth/lunar_moth_yellow.png");
+   public static final ResourceLocation MOTH_TURQUOISE = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/entity/lunar_moth/lunar_moth_turquoise.png");
+   public static final ResourceLocation MOTH_WHITE = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/entity/lunar_moth/lunar_moth_white.png");
+   public static final ResourceLocation MOTH_LIME = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/entity/lunar_moth/lunar_moth_lime.png");
+   public static final ResourceLocation MOTH_ORANGE = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/entity/lunar_moth/lunar_moth_orange.png");
+   public static final ResourceLocation MOTH_PINK = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/entity/lunar_moth/lunar_moth_pink.png");
+   public static final ResourceLocation MOTH_YELLOW = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/entity/lunar_moth/lunar_moth_yellow.png");
 
    public LunarMothRenderer(EntityRendererProvider.Context context) {
       super(context, new LunarMothModel<>(context.bakeLayer(ModelLayerInit.LUNAR_MOTH_LAYER)), 0.2F);

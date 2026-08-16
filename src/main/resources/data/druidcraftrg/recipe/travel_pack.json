@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "O O",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:leather"
+    },
+    "O": {
+      "item": "minecraft:iron_nugget"
+    }
+  },
+  "result": {
+    "id": "druidcraftrg:travel_pack"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "type": "druidcraftrg:woodcutting",
+  "ingredient": {
+    "item": "minecraft:dark_oak_log"
+  },
+  "result": {
+    "id": "druidcraftrg:dark_oak_beam"
+  }
+}

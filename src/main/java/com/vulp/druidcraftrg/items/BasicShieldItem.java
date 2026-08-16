@@ -12,9 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 public class BasicShieldItem extends Item {
 
@@ -27,17 +25,12 @@ public class BasicShieldItem extends Item {
    }
 
    @Override
-   public boolean canPerformAction(ItemStack stack, ToolAction toolAction) {
-      return toolAction == ToolActions.SHIELD_BLOCK;
-   }
-
-   @Override
    public UseAnim getUseAnimation(ItemStack stack) {
       return UseAnim.BLOCK;
    }
 
    @Override
-   public int getUseDuration(ItemStack stack) {
+   public int getUseDuration(ItemStack stack, net.minecraft.world.entity.LivingEntity entity) {
       return 72000;
    }
 

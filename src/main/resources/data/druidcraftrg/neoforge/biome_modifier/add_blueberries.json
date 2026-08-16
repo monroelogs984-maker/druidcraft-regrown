@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#druidcraftrg:has_blueberries",
+  "features": "druidcraftrg:patch_blueberry",
+  "step": "vegetal_decoration"
+}

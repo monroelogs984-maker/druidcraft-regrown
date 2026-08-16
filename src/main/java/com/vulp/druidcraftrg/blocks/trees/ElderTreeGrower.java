@@ -1,18 +1,20 @@
 package com.vulp.druidcraftrg.blocks.trees;
 
+import java.util.Optional;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.grower.AbstractTreeGrower;
+import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 
-public class ElderTreeGrower extends AbstractTreeGrower {
+public class ElderTreeGrower {
    public static final ResourceKey<ConfiguredFeature<?, ?>> ELDER_TREE =
-      ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation("druidcraftrg", "elder_tree"));
+      ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath("druidcraftrg", "elder_tree"));
 
-   @Override
-   protected ResourceKey<ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource random, boolean hasFlowers) {
-      return ELDER_TREE;
-   }
+   public static final TreeGrower INSTANCE = new TreeGrower(
+      "elder",
+      Optional.of(ELDER_TREE),
+      Optional.<ResourceKey<ConfiguredFeature<?, ?>>>empty(),
+      Optional.<ResourceKey<ConfiguredFeature<?, ?>>>empty()
+   );
 }

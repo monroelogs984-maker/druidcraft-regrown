@@ -1,0 +1,9 @@
+{
+  "type": "druidcraftrg:woodcutting",
+  "ingredient": {
+    "item": "druidcraftrg:elder_wood"
+  },
+  "result": {
+    "id": "druidcraftrg:elder_log"
+  }
+}

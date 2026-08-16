@@ -28,8 +28,8 @@ import net.minecraft.core.Direction.Axis;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class BeamRopeRenderer implements BlockEntityRenderer<BeamTileEntity> {
@@ -49,7 +49,7 @@ public class BeamRopeRenderer implements BlockEntityRenderer<BeamTileEntity> {
       poseStack.translate(0.5, -0.5, 0.5);
       Material material = new Material(TextureAtlas.LOCATION_BLOCKS, TEXTURE);
       VertexConsumer vertexConsumer = material.buffer(bufferSource, this.MODEL::renderType);
-      this.MODEL.renderToBuffer(poseStack, vertexConsumer, combinedLight, combinedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
+      this.MODEL.renderToBuffer(poseStack, vertexConsumer, combinedLight, combinedOverlay, -1);
       if (!directions.isEmpty()) {
          BlockState ropeState = BlockInit.rope.defaultBlockState();
 
@@ -87,7 +87,7 @@ public class BeamRopeRenderer implements BlockEntityRenderer<BeamTileEntity> {
          return LayerDefinition.create(meshdefinition, 64, 32);
       }
 
-      public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+      public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
          this.lashing.render(poseStack, buffer, packedLight, packedOverlay);
       }
 

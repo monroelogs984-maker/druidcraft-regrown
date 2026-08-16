@@ -1,8 +1,0 @@
-{
-  "type": "druidcraftrg:woodcutting",
-  "ingredient": {
-    "item": "druidcraftrg:darkwood_planks"
-  },
-  "result": "druidcraftrg:darkwood_pressure_plate",
-  "count": 3
-}

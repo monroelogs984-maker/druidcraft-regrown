@@ -11,8 +11,8 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 // 1.16.5 TravelPackModel/BedrollTravelPackModel merged; cubes are in body-local space and
 // the layer renders this under the body part's pose, so sneak/swing follow automatically
@@ -43,7 +43,7 @@ public class TravelPackModel extends Model {
    }
 
    @Override
-   public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-      this.pack.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+   public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
+      this.pack.render(poseStack, buffer, packedLight, packedOverlay, color);
    }
 }

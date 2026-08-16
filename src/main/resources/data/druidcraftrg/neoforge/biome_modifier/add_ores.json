@@ -1,0 +1,11 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": [
+    "druidcraftrg:ore_amber",
+    "druidcraftrg:ore_moonstone",
+    "druidcraftrg:ore_fiery_glass",
+    "druidcraftrg:ore_rockroot"
+  ],
+  "step": "underground_ores"
+}

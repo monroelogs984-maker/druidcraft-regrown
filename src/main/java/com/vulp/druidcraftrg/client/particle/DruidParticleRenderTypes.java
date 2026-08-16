@@ -15,20 +15,13 @@ public class DruidParticleRenderTypes {
    // 1.16.5 ICustomParticleRender.PARTICLE_SHEET_TRANSLUCENT_ADDITIVE
    public static final ParticleRenderType TRANSLUCENT_ADDITIVE = new ParticleRenderType() {
       @Override
-      public void begin(BufferBuilder builder, TextureManager textureManager) {
+      public BufferBuilder begin(Tesselator tesselator, TextureManager textureManager) {
          RenderSystem.depthMask(false);
          RenderSystem.setShader(GameRenderer::getParticleShader);
          RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
          RenderSystem.enableBlend();
          RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR);
-         builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-      }
-
-      @Override
-      public void end(Tesselator tesselator) {
-         tesselator.end();
-         RenderSystem.depthMask(true);
-         RenderSystem.defaultBlendFunc();
+         return tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
       }
 
       @Override

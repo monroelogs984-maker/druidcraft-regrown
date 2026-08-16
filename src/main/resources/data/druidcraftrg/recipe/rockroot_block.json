@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "rockroot_blocks",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "tag": "druidcraftrg:rockroots"
+    }
+  },
+  "result": {
+    "id": "druidcraftrg:rockroot_block"
+  }
+}

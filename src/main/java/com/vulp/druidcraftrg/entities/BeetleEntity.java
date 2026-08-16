@@ -27,7 +27,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -54,17 +53,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
 public class BeetleEntity extends TameableMonsterEntity implements ContainerListener, MenuProvider {
    private static final EntityDataAccessor<Boolean> SADDLE = SynchedEntityData.defineId(BeetleEntity.class, EntityDataSerializers.BOOLEAN);
    private static final EntityDataAccessor<Boolean> CHEST = SynchedEntityData.defineId(BeetleEntity.class, EntityDataSerializers.BOOLEAN);
    private SimpleContainer beetleChest;
-   private LazyOptional<?> itemHandler = null;
+   @Nullable private IItemHandlerModifiable itemHandler = null;
 
    public BeetleEntity(EntityType<? extends BeetleEntity> type, Level worldIn) {
       super(type, worldIn);
@@ -73,10 +69,10 @@ public class BeetleEntity extends TameableMonsterEntity implements ContainerList
    }
 
    @Override
-   protected void defineSynchedData() {
-      super.defineSynchedData();
-      this.entityData.define(SADDLE, false);
-      this.entityData.define(CHEST, false);
+   protected void defineSynchedData(SynchedEntityData.Builder builder) {
+      super.defineSynchedData(builder);
+      builder.define(SADDLE, false);
+      builder.define(CHEST, false);
    }
 
    @Override
@@ -128,13 +124,9 @@ public class BeetleEntity extends TameableMonsterEntity implements ContainerList
    }
 
    @Override
-   protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-      return 0.8F;
-   }
-
-   @Override
    public void addAdditionalSaveData(CompoundTag compound) {
       super.addAdditionalSaveData(compound);
+      net.minecraft.core.HolderLookup.Provider registries = this.level().registryAccess();
       compound.putBoolean("saddled", this.hasSaddle());
       compound.putBoolean("chested", this.hasChest());
       if (this.hasChest()) {
@@ -142,22 +134,22 @@ public class BeetleEntity extends TameableMonsterEntity implements ContainerList
          for (int i = 2; i < this.beetleChest.getContainerSize(); ++i) {
             ItemStack itemstack = this.beetleChest.getItem(i);
             if (!itemstack.isEmpty()) {
-               CompoundTag compoundnbt = new CompoundTag();
+               CompoundTag compoundnbt = (CompoundTag) itemstack.save(registries);
                compoundnbt.putByte("Slot", (byte) i);
-               itemstack.save(compoundnbt);
                listnbt.add(compoundnbt);
             }
          }
          compound.put("Items", listnbt);
       }
       if (!this.beetleChest.getItem(0).isEmpty()) {
-         compound.put("SaddleItem", this.beetleChest.getItem(0).save(new CompoundTag()));
+         compound.put("SaddleItem", this.beetleChest.getItem(0).save(registries));
       }
    }
 
    @Override
    public void readAdditionalSaveData(CompoundTag compound) {
       super.readAdditionalSaveData(compound);
+      net.minecraft.core.HolderLookup.Provider registries = this.level().registryAccess();
       this.setSaddled(compound.getBoolean("saddled"));
       this.setChested(compound.getBoolean("chested"));
       if (this.hasChest()) {
@@ -167,22 +159,17 @@ public class BeetleEntity extends TameableMonsterEntity implements ContainerList
             CompoundTag compoundnbt = listnbt.getCompound(i);
             int j = compoundnbt.getByte("Slot") & 255;
             if (j >= 2 && j < this.beetleChest.getContainerSize()) {
-               this.beetleChest.setItem(j, ItemStack.of(compoundnbt));
+               this.beetleChest.setItem(j, ItemStack.parseOptional(registries, compoundnbt));
             }
          }
       }
       if (compound.contains("SaddleItem", 10)) {
-         ItemStack itemstack = ItemStack.of(compound.getCompound("SaddleItem"));
+         ItemStack itemstack = ItemStack.parseOptional(registries, compound.getCompound("SaddleItem"));
          if (itemstack.getItem() == Items.SADDLE) {
             this.beetleChest.setItem(0, itemstack);
          }
       }
       this.updateBeetleSlots();
-   }
-
-   @Override
-   public MobType getMobType() {
-      return MobType.ARTHROPOD;
    }
 
    private int getInventorySize() {
@@ -302,7 +289,7 @@ public class BeetleEntity extends TameableMonsterEntity implements ContainerList
    private void openGUI(Player playerEntity) {
       if (!this.level().isClientSide && (!this.isVehicle() || this.hasPassenger(playerEntity)) && this.isTamed()
             && playerEntity instanceof ServerPlayer serverPlayer) {
-         NetworkHooks.openScreen(serverPlayer, this, packetBuffer -> {
+         serverPlayer.openMenu(this, packetBuffer -> {
             packetBuffer.writeInt(this.getId());
             packetBuffer.writeInt(getInventorySize());
          });
@@ -324,7 +311,7 @@ public class BeetleEntity extends TameableMonsterEntity implements ContainerList
       }
       this.beetleChest.addListener(this);
       this.updateBeetleSlots();
-      this.itemHandler = LazyOptional.of(() -> new InvWrapper(this.beetleChest));
+      this.itemHandler = new InvWrapper(this.beetleChest);
    }
 
    private void playChestEquipSound() {
@@ -368,17 +355,14 @@ public class BeetleEntity extends TameableMonsterEntity implements ContainerList
       }
    }
 
-   @Override
-   public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
-      if (this.isAlive() && capability == ForgeCapabilities.ITEM_HANDLER && itemHandler != null) {
-         return itemHandler.cast();
-      }
-      return super.getCapability(capability, facing);
+   @Nullable
+   public IItemHandlerModifiable getItemHandler() {
+      return this.isAlive() ? this.itemHandler : null;
    }
 
    @Override
-   public double getPassengersRidingOffset() {
-      return this.getBbHeight() - 0.15D;
+   public Vec3 getPassengerRidingPosition(net.minecraft.world.entity.Entity passenger) {
+      return this.position().add(0, this.getBbHeight() - 0.15D, 0);
    }
 
    @Nullable
@@ -395,7 +379,6 @@ public class BeetleEntity extends TameableMonsterEntity implements ContainerList
       super.tickRidden(player, input);
       this.setRot(player.getYRot(), player.getXRot() * 0.5F);
       this.yRotO = this.yBodyRot = this.yHeadRot = this.getYRot();
-      this.setMaxUpStep(1.0F);
    }
 
    @Override
@@ -411,11 +394,6 @@ public class BeetleEntity extends TameableMonsterEntity implements ContainerList
    static class AttackGoal extends MeleeAttackGoal {
       public AttackGoal(BeetleEntity beetle) {
          super(beetle, 0.85D, true);
-      }
-
-      @Override
-      protected double getAttackReachSqr(LivingEntity attackTarget) {
-         return 4.0F + attackTarget.getBbWidth();
       }
    }
 }

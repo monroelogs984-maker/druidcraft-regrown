@@ -9,6 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PlayerRideable;
 import net.minecraft.world.entity.Saddleable;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,10 +30,15 @@ public class AdultBeetle extends Animal implements ContainerListener, PlayerRide
       return false;
    }
 
-   public void equipSaddle(@Nullable SoundSource soundSource) {
+   public void equipSaddle(ItemStack stack, @Nullable SoundSource soundSource) {
    }
 
    public boolean isSaddled() {
+      return false;
+   }
+
+   @Override
+   public boolean isFood(ItemStack stack) {
       return false;
    }
 }

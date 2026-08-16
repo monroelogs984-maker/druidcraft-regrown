@@ -1,8 +1,0 @@
-{
-  "type": "druidcraftrg:woodcutting",
-  "ingredient": {
-    "item": "minecraft:jungle_log"
-  },
-  "result": "druidcraftrg:jungle_beam",
-  "count": 1
-}

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "druidcraftrg:dry_mud_bricks"
+  },
+  "result": {
+    "id": "druidcraftrg:dry_mud_brick_wall"
+  }
+}

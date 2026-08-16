@@ -1,0 +1,9 @@
+{
+  "type": "druidcraftrg:woodcutting",
+  "ingredient": {
+    "item": "minecraft:acacia_wood"
+  },
+  "result": {
+    "id": "druidcraftrg:acacia_beam"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "type": "druidcraftrg:woodcutting",
+  "ingredient": {
+    "item": "minecraft:spruce_log"
+  },
+  "result": {
+    "id": "druidcraftrg:spruce_beam"
+  }
+}

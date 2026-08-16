@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -31,15 +30,15 @@ public class BerryBushBlock extends SweetBerryBushBlock {
    }
 
    @Override
-   public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+   public ItemStack getCloneItemStack(net.minecraft.world.level.LevelReader level, BlockPos pos, BlockState state) {
       return new ItemStack(this.item.get());
    }
 
    @Override
-   public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+   public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
       int i = state.getValue(AGE);
       boolean flag = i == 3;
-      if (!flag && player.getItemInHand(hand).is(Items.BONE_MEAL)) {
+      if (!flag && player.getMainHandItem().is(Items.BONE_MEAL)) {
          return InteractionResult.PASS;
       } else if (i > 1) {
          int j = 1 + level.random.nextInt(2);
@@ -48,7 +47,7 @@ public class BerryBushBlock extends SweetBerryBushBlock {
          level.setBlock(pos, state.setValue(AGE, 1), 2);
          return InteractionResult.sidedSuccess(level.isClientSide);
       } else {
-         return super.use(state, level, pos, player, hand, hit);
+         return super.useWithoutItem(state, level, pos, player, hit);
       }
    }
 

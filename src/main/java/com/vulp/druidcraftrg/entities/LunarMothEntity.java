@@ -10,10 +10,12 @@ import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -49,7 +51,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 
 public class LunarMothEntity extends Animal {
@@ -62,12 +64,12 @@ public class LunarMothEntity extends Animal {
    public LunarMothEntity(EntityType<? extends LunarMothEntity> type, Level worldIn) {
       super(type, worldIn);
       this.moveControl = new FlyingMoveControl(this, 10, false);
-      this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, -1.0F);
-      this.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, -1.0F);
-      this.setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
-      this.setPathfindingMalus(BlockPathTypes.WATER_BORDER, -1.0F);
-      this.setPathfindingMalus(BlockPathTypes.COCOA, -1.0F);
-      this.setPathfindingMalus(BlockPathTypes.FENCE, -1.0F);
+      this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+      this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
+      this.setPathfindingMalus(PathType.WATER, -1.0F);
+      this.setPathfindingMalus(PathType.WATER_BORDER, -1.0F);
+      this.setPathfindingMalus(PathType.COCOA, -1.0F);
+      this.setPathfindingMalus(PathType.FENCE, -1.0F);
    }
 
    @Override
@@ -93,11 +95,11 @@ public class LunarMothEntity extends Animal {
    }
 
    @Override
-   protected void defineSynchedData() {
-      super.defineSynchedData();
-      this.entityData.define(RESTING, false);
-      this.entityData.define(IDLING, Direction.NORTH);
-      this.entityData.define(COLOR, LunarMothColors.colorToInt(LunarMothColors.randomColor(this.random)));
+   protected void defineSynchedData(SynchedEntityData.Builder builder) {
+      super.defineSynchedData(builder);
+      builder.define(RESTING, false);
+      builder.define(IDLING, Direction.NORTH);
+      builder.define(COLOR, LunarMothColors.colorToInt(LunarMothColors.randomColor(this.random)));
    }
 
    public boolean isResting() {
@@ -140,7 +142,9 @@ public class LunarMothEntity extends Animal {
       ItemStack stack = LunarMothJarItem.getItemStackByColor(getColor());
       CompoundTag entityData = new CompoundTag();
       addAdditionalSaveData(entityData);
-      stack.getOrCreateTag().put("EntityTag", entityData);
+      CompoundTag stackNbt = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+      stackNbt.put("EntityTag", entityData);
+      stack.set(DataComponents.CUSTOM_DATA, CustomData.of(stackNbt));
       if (!player.getInventory().add(stack)) {
          player.drop(stack, false);
       }
@@ -324,11 +328,6 @@ public class LunarMothEntity extends Animal {
          this.xxa = 0.0F;
          this.zza = 0.0F;
       }
-   }
-
-   @Override
-   protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-      return sizeIn.height / 2.0F;
    }
 
    // standalone rewrite of FollowParentGoal (its fields are private in 1.20.1) with the

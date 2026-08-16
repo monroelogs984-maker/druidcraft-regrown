@@ -1,0 +1,10 @@
+{
+  "type": "druidcraftrg:woodcutting",
+  "ingredient": {
+    "item": "druidcraftrg:elder_planks"
+  },
+  "result": {
+    "id": "druidcraftrg:elder_slab",
+    "count": 2
+  }
+}

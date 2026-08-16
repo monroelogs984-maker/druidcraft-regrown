@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "wooden_pressure_plate",
+  "pattern": [
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "druidcraftrg:elder_planks"
+    }
+  },
+  "result": {
+    "id": "druidcraftrg:elder_pressure_plate"
+  }
+}

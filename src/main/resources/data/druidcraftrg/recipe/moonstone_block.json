@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "moonstone_blocks",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "druidcraftrg:moonstone"
+    }
+  },
+  "result": {
+    "id": "druidcraftrg:moonstone_block"
+  }
+}

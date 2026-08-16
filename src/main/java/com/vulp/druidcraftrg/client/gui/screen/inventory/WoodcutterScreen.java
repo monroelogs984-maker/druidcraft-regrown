@@ -2,6 +2,7 @@ package com.vulp.druidcraftrg.client.gui.screen.inventory;
 
 import com.vulp.druidcraftrg.inventory.container.WoodcutterMenu;
 import com.vulp.druidcraftrg.recipes.WoodcuttingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,7 +16,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 // stonecutter screen clone with the woodcutter background
 public class WoodcutterScreen extends AbstractContainerScreen<WoodcutterMenu> {
-   private static final ResourceLocation BG_LOCATION = new ResourceLocation("druidcraftrg", "textures/gui/container/woodcutter.png");
+   private static final ResourceLocation BG_LOCATION = ResourceLocation.fromNamespaceAndPath("druidcraftrg", "textures/gui/container/woodcutter.png");
    private float scrollOffs;
    private boolean scrolling;
    private int startIndex;
@@ -35,7 +36,7 @@ public class WoodcutterScreen extends AbstractContainerScreen<WoodcutterMenu> {
 
    @Override
    protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-      this.renderBackground(graphics);
+      this.renderBackground(graphics, mouseX, mouseY, partialTick);
       int x = this.leftPos;
       int y = this.topPos;
       graphics.blit(BG_LOCATION, x, y, 0, 0, this.imageWidth, this.imageHeight);
@@ -55,14 +56,14 @@ public class WoodcutterScreen extends AbstractContainerScreen<WoodcutterMenu> {
          int recipesX = this.leftPos + 52;
          int recipesY = this.topPos + 14;
          int lastVisible = this.startIndex + 12;
-         List<WoodcuttingRecipe> list = this.menu.getRecipes();
+         List<RecipeHolder<WoodcuttingRecipe>> list = this.menu.getRecipes();
 
          for (int i = this.startIndex; i < lastVisible && i < this.menu.getNumRecipes(); i++) {
             int j = i - this.startIndex;
             int slotX = recipesX + j % 4 * 16;
             int slotY = recipesY + j / 4 * 18 + 2;
             if (mouseX >= slotX && mouseX < slotX + 16 && mouseY >= slotY && mouseY < slotY + 18) {
-               graphics.renderTooltip(this.font, list.get(i).getResultItem(this.minecraft.level.registryAccess()), mouseX, mouseY);
+               graphics.renderTooltip(this.font, list.get(i).value().getResultItem(this.minecraft.level.registryAccess()), mouseX, mouseY);
             }
          }
       }
@@ -84,12 +85,12 @@ public class WoodcutterScreen extends AbstractContainerScreen<WoodcutterMenu> {
    }
 
    private void renderRecipes(GuiGraphics graphics, int x, int y, int lastVisible) {
-      List<WoodcuttingRecipe> list = this.menu.getRecipes();
+      List<RecipeHolder<WoodcuttingRecipe>> list = this.menu.getRecipes();
       for (int i = this.startIndex; i < lastVisible && i < this.menu.getNumRecipes(); i++) {
          int j = i - this.startIndex;
          int slotX = x + j % 4 * 16;
          int slotY = y + j / 4 * 18 + 2;
-         graphics.renderItem(list.get(i).getResultItem(this.minecraft.level.registryAccess()), slotX, slotY);
+         graphics.renderItem(list.get(i).value().getResultItem(this.minecraft.level.registryAccess()), slotX, slotY);
       }
    }
 
@@ -135,10 +136,10 @@ public class WoodcutterScreen extends AbstractContainerScreen<WoodcutterMenu> {
    }
 
    @Override
-   public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+   public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
       if (this.isScrollBarActive()) {
          int offscreenRows = this.getOffscreenRows();
-         float f = (float) delta / (float) offscreenRows;
+         float f = (float) scrollY / (float) offscreenRows;
          this.scrollOffs = Mth.clamp(this.scrollOffs - f, 0.0F, 1.0F);
          this.startIndex = (int) ((double) (this.scrollOffs * (float) offscreenRows) + 0.5D) * 4;
       }

@@ -37,7 +37,7 @@ public class RopeLanternBlock extends Block implements SimpleWaterloggedBlock {
    }
 
    @Override
-   public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+   public ItemStack getCloneItemStack(net.minecraft.world.level.LevelReader level, BlockPos pos, BlockState state) {
       return new ItemStack(Items.LANTERN);
    }
 
@@ -71,7 +71,7 @@ public class RopeLanternBlock extends Block implements SimpleWaterloggedBlock {
    }
 
    @Override
-   public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType type) {
+   public boolean isPathfindable(BlockState state, PathComputationType type) {
       return false;
    }
 }

@@ -2,33 +2,20 @@ package com.vulp.druidcraftrg;
 
 import com.vulp.druidcraftrg.init.BlockInit;
 import com.vulp.druidcraftrg.init.ItemInit;
-import java.util.Arrays;
-import net.minecraft.world.entity.animal.Chicken;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.FireBlock;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
-// 1.16.5 VanillaIntegrationRegistry — compostables, flammables, chicken temptation;
-// log stripping is handled by StrippablePillarBlock.getToolModifiedState instead
-@EventBusSubscriber(
-   modid = "druidcraftrg"
-)
+// 1.16.5 VanillaIntegrationRegistry — compostables, flammables
 public class CommonSetup {
    public static void init(FMLCommonSetupEvent event) {
       event.enqueueWork(() -> {
          registerCompostables();
          registerFlammables();
-         registerAnimalFoods();
       });
-   }
-
-   private static void registerAnimalFoods() {
-      Chicken.FOOD_ITEMS = Ingredient.merge(Arrays.asList(Chicken.FOOD_ITEMS, Ingredient.of(new ItemLike[]{ItemInit.hemp_seeds})));
    }
 
    private static void registerCompostables() {

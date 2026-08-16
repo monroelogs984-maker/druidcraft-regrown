@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": ["minecraft:plains", "minecraft:sunflower_plains"],
+  "spawners": {
+    "type": "druidcraftrg:lunar_moth",
+    "weight": 2,
+    "minCount": 2,
+    "maxCount": 5
+  }
+}

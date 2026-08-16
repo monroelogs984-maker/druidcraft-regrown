@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -29,7 +30,7 @@ public class FieryTorchBlock extends TorchBlock implements SimpleWaterloggedBloc
    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
    public FieryTorchBlock(Properties properties) {
-      super(properties, null);
+      super(null, properties);
       this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, false));
    }
 
@@ -60,8 +61,7 @@ public class FieryTorchBlock extends TorchBlock implements SimpleWaterloggedBloc
    }
 
    @Override
-   public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
-      if (level == null) return;
+   public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
       if (!Screen.hasShiftDown()) {
          tooltip.add(Component.translatable("block.druidcraftrg.hold_shift").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
       } else {

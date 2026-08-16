@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "OXO",
+    " O "
+  ],
+  "key": {
+    "X": {
+      "tag": "minecraft:planks"
+    },
+    "O": {
+      "item": "minecraft:bone"
+    }
+  },
+  "result": {
+    "id": "druidcraftrg:bone_shield"
+  }
+}

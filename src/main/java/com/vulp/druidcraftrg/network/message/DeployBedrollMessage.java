@@ -1,34 +1,19 @@
 package com.vulp.druidcraftrg.network.message;
 
-import com.vulp.druidcraftrg.items.TravelPackItem;
-import java.util.function.Supplier;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
-public class DeployBedrollMessage {
+public record DeployBedrollMessage(int entityId) implements CustomPacketPayload {
+   public static final Type<DeployBedrollMessage> TYPE = new Type<>(
+      ResourceLocation.fromNamespaceAndPath("druidcraftrg", "deploy_bedroll"));
+   public static final StreamCodec<ByteBuf, DeployBedrollMessage> STREAM_CODEC =
+      StreamCodec.composite(ByteBufCodecs.INT, DeployBedrollMessage::entityId, DeployBedrollMessage::new);
 
-   private final int entityId;
-
-   public DeployBedrollMessage(int entityId) {
-      this.entityId = entityId;
-   }
-
-   public static void encode(DeployBedrollMessage message, FriendlyByteBuf buffer) {
-      buffer.writeInt(message.entityId);
-   }
-
-   public static DeployBedrollMessage decode(FriendlyByteBuf buffer) {
-      return new DeployBedrollMessage(buffer.readInt());
-   }
-
-   public static void handle(DeployBedrollMessage message, Supplier<NetworkEvent.Context> supplier) {
-      supplier.get().enqueueWork(() -> {
-         ServerPlayer sender = supplier.get().getSender();
-         if (sender != null) {
-            TravelPackItem.deployBedroll(message.entityId, sender.level());
-         }
-      });
-      supplier.get().setPacketHandled(true);
+   @Override
+   public Type<DeployBedrollMessage> type() {
+      return TYPE;
    }
 }

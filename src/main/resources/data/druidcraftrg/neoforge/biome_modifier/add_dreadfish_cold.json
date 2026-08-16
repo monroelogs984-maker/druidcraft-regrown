@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#c:is_cold/overworld",
+  "spawners": {
+    "type": "druidcraftrg:dreadfish",
+    "weight": 40,
+    "minCount": 1,
+    "maxCount": 3
+  }
+}

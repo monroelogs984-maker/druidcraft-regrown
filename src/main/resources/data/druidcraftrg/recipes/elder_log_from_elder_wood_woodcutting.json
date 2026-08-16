@@ -1,8 +1,0 @@
-{
-  "type": "druidcraftrg:woodcutting",
-  "ingredient": {
-    "item": "druidcraftrg:elder_wood"
-  },
-  "result": "druidcraftrg:elder_log",
-  "count": 1
-}

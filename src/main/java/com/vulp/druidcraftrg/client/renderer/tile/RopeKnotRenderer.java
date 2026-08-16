@@ -35,7 +35,7 @@ public class RopeKnotRenderer implements BlockEntityRenderer<RopeTileEntity> {
       this.MODEL.knot.visible = tileEntity.hasKnot();
       Material material = new Material(TextureAtlas.LOCATION_BLOCKS, TEXTURE);
       VertexConsumer vertexConsumer = material.buffer(iRenderTypeBuffer, this.MODEL::renderType);
-      this.MODEL.renderToBuffer(poseStack, vertexConsumer, i, i1, 1.0F, 1.0F, 1.0F, 1.0F);
+      this.MODEL.renderToBuffer(poseStack, vertexConsumer, i, i1, -1);
       poseStack.popPose();
    }
 
@@ -62,7 +62,7 @@ public class RopeKnotRenderer implements BlockEntityRenderer<RopeTileEntity> {
          return LayerDefinition.create(meshdefinition, 16, 16);
       }
 
-      public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+      public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
          this.knot.render(poseStack, buffer, packedLight, packedOverlay);
       }
    }

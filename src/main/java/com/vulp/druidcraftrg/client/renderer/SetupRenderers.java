@@ -28,22 +28,23 @@ import com.vulp.druidcraftrg.init.ContainerInit;
 import com.vulp.druidcraftrg.init.ItemInit;
 import com.vulp.druidcraftrg.init.ModelLayerInit;
 import com.vulp.druidcraftrg.init.ParticleInit;
-import net.minecraft.client.gui.screens.MenuScreens;
+
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions;
-import net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.EventBusSubscriber.Bus;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 
 @EventBusSubscriber(
    modid = "druidcraftrg",
@@ -99,20 +100,26 @@ public class SetupRenderers {
          ItemBlockRenderTypes.setRenderLayer(BlockInit.yellow_lunar_moth_jar, RenderType.cutout());
          ItemBlockRenderTypes.setRenderLayer(BlockInit.orange_lunar_moth_jar, RenderType.cutout());
          ItemBlockRenderTypes.setRenderLayer(BlockInit.pink_lunar_moth_jar, RenderType.cutout());
-         ItemProperties.register(ItemInit.bone_shield, new ResourceLocation("blocking"), SetupRenderers::blockingProperty);
-         ItemProperties.register(ItemInit.chitin_shield, new ResourceLocation("blocking"), SetupRenderers::blockingProperty);
-         ItemProperties.register(ItemInit.moonstone_shield, new ResourceLocation("blocking"), SetupRenderers::blockingProperty);
-         ItemProperties.register(ItemInit.travel_pack, new ResourceLocation("druidcraftrg", "color"),
-            (stack, level, entity, seed) -> stack.getTag() != null && stack.getTag().contains("Color")
-               ? (float) stack.getTag().getInt("Color") : -1.0F);
+         ItemProperties.register(ItemInit.bone_shield, ResourceLocation.withDefaultNamespace("blocking"), SetupRenderers::blockingProperty);
+         ItemProperties.register(ItemInit.chitin_shield, ResourceLocation.withDefaultNamespace("blocking"), SetupRenderers::blockingProperty);
+         ItemProperties.register(ItemInit.moonstone_shield, ResourceLocation.withDefaultNamespace("blocking"), SetupRenderers::blockingProperty);
+         ItemProperties.register(ItemInit.travel_pack, ResourceLocation.fromNamespaceAndPath("druidcraftrg", "color"),
+            (stack, level, entity, seed) -> {
+               net.minecraft.world.item.component.CustomData cd = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+               return cd != null && cd.copyTag().contains("Color") ? (float) cd.copyTag().getInt("Color") : -1.0F;
+            });
       });
-      MenuScreens.register(ContainerInit.CRATE_9x3, CrateScreen::new);
-      MenuScreens.register(ContainerInit.CRATE_9x6, CrateScreen::new);
-      MenuScreens.register(ContainerInit.CRATE_9x12, CrateScreen::new);
-      MenuScreens.register(ContainerInit.CRATE_9x24, CrateScreen::new);
-      MenuScreens.register(ContainerInit.WOODCUTTER, WoodcutterScreen::new);
-      MenuScreens.register(ContainerInit.TRAVEL_PACK, TravelPackScreen::new);
-      MenuScreens.register(ContainerInit.BEETLE_INV, BeetleInventoryScreen::new);
+   }
+
+   @SubscribeEvent
+   public static void registerMenuScreens(net.neoforged.neoforge.client.event.RegisterMenuScreensEvent event) {
+      event.register(ContainerInit.CRATE_9x3, CrateScreen::new);
+      event.register(ContainerInit.CRATE_9x6, CrateScreen::new);
+      event.register(ContainerInit.CRATE_9x12, CrateScreen::new);
+      event.register(ContainerInit.CRATE_9x24, CrateScreen::new);
+      event.register(ContainerInit.WOODCUTTER, WoodcutterScreen::new);
+      event.register(ContainerInit.TRAVEL_PACK, TravelPackScreen::new);
+      event.register(ContainerInit.BEETLE_INV, BeetleInventoryScreen::new);
    }
 
    private static float blockingProperty(net.minecraft.world.item.ItemStack stack, net.minecraft.client.multiplayer.ClientLevel level, net.minecraft.world.entity.LivingEntity entity, int seed) {
@@ -159,7 +166,7 @@ public class SetupRenderers {
 
    @SubscribeEvent
    public static void addPlayerLayers(EntityRenderersEvent.AddLayers event) {
-      for (String skin : event.getSkins()) {
+      for (PlayerSkin.Model skin : event.getSkins()) {
          if (event.getSkin(skin) instanceof PlayerRenderer renderer) {
             renderer.addLayer(new TravelPackLayer(renderer, event.getEntityModels()));
          }

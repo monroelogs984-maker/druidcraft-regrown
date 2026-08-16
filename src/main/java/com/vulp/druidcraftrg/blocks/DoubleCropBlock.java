@@ -1,6 +1,5 @@
 package com.vulp.druidcraftrg.blocks;
 
-import java.util.Random;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -20,8 +19,9 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.IPlantable;
+import net.minecraft.util.RandomSource;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.util.TriState;
 
 public class DoubleCropBlock extends CropBlock {
    public static final BooleanProperty BOTTOM = BlockStateProperties.BOTTOM;
@@ -63,17 +63,17 @@ public class DoubleCropBlock extends CropBlock {
       return true;
    }
 
-   public void randomTick(BlockState state, ServerLevel world, BlockPos pos, Random rand) {
+   public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource rand) {
       if (!this.isMaxAge(state) || this.canGrowUpward(world, state, pos)) {
          if (!world.isAreaLoaded(pos, 1)) {
             return;
          }
 
          if (world.getRawBrightness(pos, 0) >= 9) {
-            float f = getGrowthSpeed(this, world, pos);
-            if (ForgeHooks.onCropsGrowPre(world, pos, state, rand.nextInt((int)(25.0F / f) + 1) == 0)) {
+            float f = getGrowthSpeed(state, world, pos);
+            if (CommonHooks.canCropGrow(world, pos, state, rand.nextInt((int)(25.0F / f) + 1) == 0)) {
                this.naturalGrowth(world, pos, state);
-               ForgeHooks.onCropsGrowPost(world, pos, state);
+               CommonHooks.fireCropGrowPost(world, pos, state);
             }
          }
       }
@@ -131,8 +131,8 @@ public class DoubleCropBlock extends CropBlock {
       return super.mayPlaceOn(state, reader, pos) || state.getBlock() == this && this.isMaxAge(state) || state.is(BlockTags.DIRT);
    }
 
-   public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, IPlantable plantable) {
-      return super.canSustainPlant(state, world, pos, facing, plantable);
+   public TriState canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, BlockState plant) {
+      return TriState.DEFAULT;
    }
 
    private boolean canGrowUpward(BlockGetter reader, BlockState state, BlockPos pos) {
