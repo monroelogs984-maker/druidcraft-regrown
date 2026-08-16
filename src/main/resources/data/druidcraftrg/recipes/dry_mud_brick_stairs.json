@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "druidcraftrg:dry_mud_bricks"
+    }
+  },
+  "result": {
+    "item": "druidcraftrg:dry_mud_brick_stairs",
+    "count": 4
+  }
+}

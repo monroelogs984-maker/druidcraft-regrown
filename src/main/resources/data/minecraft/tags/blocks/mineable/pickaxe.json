@@ -1,0 +1,20 @@
+{
+    "replace": false,
+    "values": [
+        "druidcraftrg:amber_ore",
+        "druidcraftrg:moonstone_ore",
+        "druidcraftrg:fiery_glass_ore",
+        "druidcraftrg:rockroot_ore",
+        "druidcraftrg:amber_block",
+        "druidcraftrg:moonstone_block",
+        "druidcraftrg:fiery_glass_block",
+        "druidcraftrg:rockroot_block",
+        "druidcraftrg:dry_mud_bricks",
+        "druidcraftrg:dry_mud_brick_slab",
+        "druidcraftrg:dry_mud_brick_stairs",
+        "druidcraftrg:dry_mud_brick_wall",
+        "druidcraftrg:rope_lantern",
+        "druidcraftrg:ceramic_lantern",
+        "druidcraftrg:growth_lamp"
+    ]
+}

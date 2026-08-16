@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "wooden_button",
+  "ingredients": [
+    {
+      "item": "druidcraftrg:elder_planks"
+    }
+  ],
+  "result": {
+    "item": "druidcraftrg:elder_button"
+  }
+}

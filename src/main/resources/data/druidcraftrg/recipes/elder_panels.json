@@ -1,0 +1,15 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "# #",
+		"# #",
+		"# #"
+    ],
+    "key": {
+        "#": {
+            "item": "druidcraftrg:elder_planks"
+        }
+    },
+    "result": { "item": "druidcraftrg:elder_panels", "count": 6 },
+    "group": "panels"
+}

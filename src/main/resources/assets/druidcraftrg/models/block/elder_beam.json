@@ -1,0 +1,7 @@
+{
+    "parent": "minecraft:block/cube_column",
+    "textures": {
+        "end": "druidcraftrg:block/elder_beam_top",
+        "side": "druidcraftrg:block/elder_beam"
+    }
+}

@@ -1,0 +1,7 @@
+{
+	"variants": {
+		"": [ { "model": "druidcraftrg:block/lavender_a" },
+			  { "model": "druidcraftrg:block/lavender_b" },
+			  { "model": "druidcraftrg:block/lavender_c" } ]
+	}
+}

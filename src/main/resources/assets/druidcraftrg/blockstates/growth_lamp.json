@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "hanging=true,roped=true":
+		{ "model": "druidcraftrg:block/rope_growth_lamp" },
+		"hanging=true,roped=false":
+		{ "model": "druidcraftrg:block/hanging_growth_lamp" },
+		"hanging=false":
+		{ "model": "druidcraftrg:block/growth_lamp" }
+	}
+}

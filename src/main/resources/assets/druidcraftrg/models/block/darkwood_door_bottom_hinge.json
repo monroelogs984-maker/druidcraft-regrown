@@ -1,0 +1,7 @@
+{
+    "parent": "block/door_bottom_rh",
+    "textures": {
+        "bottom": "druidcraftrg:block/darkwood_door_bottom",
+        "top": "druidcraftrg:block/darkwood_door_top"
+    }
+}

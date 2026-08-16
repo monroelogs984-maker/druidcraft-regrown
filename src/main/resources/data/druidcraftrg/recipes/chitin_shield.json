@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "O O",
+    " X ",
+    "O O"
+  ],
+  "key": {
+    "X": {
+      "item": "druidcraftrg:chitin"
+    },
+    "O": {
+      "item": "minecraft:iron_nugget"
+    }
+  },
+  "result": {
+    "item": "druidcraftrg:chitin_shield"
+  }
+}

@@ -1,0 +1,9 @@
+{
+    "replace": false,
+    "values": [
+        "druidcraftrg:elder_log",
+        "druidcraftrg:elder_wood",
+        "druidcraftrg:stripped_elder_log",
+        "druidcraftrg:stripped_elder_wood"
+    ]
+}

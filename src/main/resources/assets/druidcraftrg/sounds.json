@@ -1,0 +1,29 @@
+{
+  "fill_bottle": {
+    "sounds": [
+      "druidcraftrg:items/bottle/fill_bottle1",
+      "druidcraftrg:items/bottle/fill_bottle2"
+    ],
+    "subtitle": "subtitles.druidcraftrg.item.bottle.fill"
+  },
+  "open_crate": {
+    "sounds": [
+      "druidcraftrg:blocks/crate/crate_open1",
+      "druidcraftrg:blocks/crate/crate_open2"
+    ],
+    "subtitle": "subtitles.druidcraftrg.block.crate.open"
+  },
+  "close_crate": {
+    "sounds": [
+      "druidcraftrg:blocks/crate/crate_close"
+    ],
+    "subtitle": "subtitles.druidcraftrg.block.crate.close"
+  },
+  "woodcutter_take_result": {
+    "sounds": [
+      "druidcraftrg:ui/woodcutter/cut1",
+      "druidcraftrg:ui/woodcutter/cut2"
+    ],
+    "subtitle": "subtitles.druidcraftrg.ui.woodcutter.take_result"
+  }
+}

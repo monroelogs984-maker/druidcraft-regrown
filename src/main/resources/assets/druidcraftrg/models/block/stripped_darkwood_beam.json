@@ -1,0 +1,7 @@
+{
+    "parent": "minecraft:block/cube_column",
+    "textures": {
+        "end": "druidcraftrg:block/stripped_darkwood_beam_top",
+        "side": "druidcraftrg:block/stripped_darkwood_beam"
+    }
+}

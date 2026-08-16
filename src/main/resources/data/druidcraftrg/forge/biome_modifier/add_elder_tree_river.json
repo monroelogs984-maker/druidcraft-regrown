@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_river",
+  "features": "druidcraftrg:elder_tree_plains_river",
+  "step": "vegetal_decoration"
+}

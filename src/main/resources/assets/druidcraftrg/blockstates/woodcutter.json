@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "druidcraftrg:block/woodcutter" },
+        "facing=south": { "model": "druidcraftrg:block/woodcutter", "y": 180 },
+        "facing=west": { "model": "druidcraftrg:block/woodcutter", "y": 270 },
+        "facing=east": { "model": "druidcraftrg:block/woodcutter", "y": 90 }
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "##",
+        "#B"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:dirt"
+        },
+        "B": {
+            "item": "minecraft:water_bucket"
+        }
+    },
+    "result": { "item": "druidcraftrg:wet_mud_bricks", "count": 3 }
+}

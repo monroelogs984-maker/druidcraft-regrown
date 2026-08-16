@@ -1,0 +1,14 @@
+{
+  "type": "druidcraftrg:hemp",
+  "config": {
+    "tries": 12,
+    "xz_spread": 3,
+    "y_spread": 2,
+    "crop_state": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "druidcraftrg:hemp_crop"
+      }
+    }
+  }
+}

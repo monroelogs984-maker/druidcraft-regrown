@@ -1,0 +1,6 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "druidcraftrg:item/moonstone_shovel"
+    }
+}

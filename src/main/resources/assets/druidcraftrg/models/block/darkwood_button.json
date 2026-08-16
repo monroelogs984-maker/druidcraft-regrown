@@ -1,0 +1,6 @@
+{
+    "parent": "block/button",
+    "textures": {
+        "texture": "druidcraftrg:block/darkwood_planks"
+    }
+}

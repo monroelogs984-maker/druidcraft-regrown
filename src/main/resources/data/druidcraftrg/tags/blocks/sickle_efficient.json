@@ -1,0 +1,12 @@
+{
+    "replace": false,
+    "values": [
+        "#minecraft:sword_efficient",
+        "#minecraft:crops",
+        "druidcraftrg:hemp_crop",
+        "druidcraftrg:lavender",
+        "druidcraftrg:blueberry_bush",
+        "druidcraftrg:elder_fruit",
+        "druidcraftrg:elder_leaf_layer"
+    ]
+}

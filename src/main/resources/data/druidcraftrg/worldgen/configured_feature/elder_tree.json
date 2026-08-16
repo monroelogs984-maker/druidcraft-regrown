@@ -1,0 +1,34 @@
+{
+  "type": "druidcraftrg:elder_tree",
+  "config": {
+    "trunk_provider": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "druidcraftrg:elder_log"
+      }
+    },
+    "wood_provider": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "druidcraftrg:elder_wood",
+        "Properties": {
+          "drop_self": "false"
+        }
+      }
+    },
+    "leaves_provider": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "druidcraftrg:elder_leaves"
+      }
+    },
+    "sapling_provider": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "druidcraftrg:elder_sapling"
+      }
+    },
+    "decorators": [],
+    "heightmap": "OCEAN_FLOOR"
+  }
+}

@@ -1,0 +1,8 @@
+{
+    "replace": false,
+    "values": [
+        "druidcraftrg:fiery_glass_ore",
+        "druidcraftrg:fiery_glass_block",
+        "druidcraftrg:moonstone_block"
+    ]
+}

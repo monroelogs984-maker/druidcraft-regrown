@@ -1,0 +1,25 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "druidcraftrg:item/travel_pack"
+    },
+	"overrides": [
+		{"predicate": {"druidcraftrg:color":-1},"model": "druidcraftrg:item/plain_travel_pack"},
+		{"predicate": {"druidcraftrg:color":0}, "model": "druidcraftrg:item/white_travel_pack"},
+		{"predicate": {"druidcraftrg:color":1}, "model": "druidcraftrg:item/orange_travel_pack"},
+		{"predicate": {"druidcraftrg:color":2}, "model": "druidcraftrg:item/magenta_travel_pack"},
+		{"predicate": {"druidcraftrg:color":3}, "model": "druidcraftrg:item/light_blue_travel_pack"},
+		{"predicate": {"druidcraftrg:color":4}, "model": "druidcraftrg:item/yellow_travel_pack"},
+		{"predicate": {"druidcraftrg:color":5}, "model": "druidcraftrg:item/lime_travel_pack"},
+		{"predicate": {"druidcraftrg:color":6}, "model": "druidcraftrg:item/pink_travel_pack"},
+		{"predicate": {"druidcraftrg:color":7}, "model": "druidcraftrg:item/gray_travel_pack"},
+		{"predicate": {"druidcraftrg:color":8}, "model": "druidcraftrg:item/light_gray_travel_pack"},
+		{"predicate": {"druidcraftrg:color":9}, "model": "druidcraftrg:item/cyan_travel_pack"},
+		{"predicate": {"druidcraftrg:color":10}, "model": "druidcraftrg:item/purple_travel_pack"},
+		{"predicate": {"druidcraftrg:color":11}, "model": "druidcraftrg:item/blue_travel_pack"},
+		{"predicate": {"druidcraftrg:color":12}, "model": "druidcraftrg:item/brown_travel_pack"},
+		{"predicate": {"druidcraftrg:color":13}, "model": "druidcraftrg:item/green_travel_pack"},
+		{"predicate": {"druidcraftrg:color":14}, "model": "druidcraftrg:item/red_travel_pack"},
+		{"predicate": {"druidcraftrg:color":15}, "model": "druidcraftrg:item/black_travel_pack"}
+	]
+}

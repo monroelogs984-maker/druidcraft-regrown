@@ -1,0 +1,8 @@
+{
+  "type": "druidcraftrg:woodcutting",
+  "ingredient": {
+    "item": "druidcraftrg:elder_planks"
+  },
+  "result": "druidcraftrg:elder_pressure_plate",
+  "count": 3
+}

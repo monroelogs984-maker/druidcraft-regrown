@@ -1,0 +1,8 @@
+{
+    "parent": "block/slab",
+    "textures": {
+        "bottom": "druidcraftrg:block/darkwood_planks",
+        "top": "druidcraftrg:block/darkwood_planks",
+        "side": "druidcraftrg:block/darkwood_planks"
+    }
+}

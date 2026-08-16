@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "axis=y":    { "model": "druidcraftrg:block/stripped_darkwood_log" },
+        "axis=z":     { "model": "druidcraftrg:block/stripped_darkwood_log", "x": 90 },
+        "axis=x":     { "model": "druidcraftrg:block/stripped_darkwood_log", "x": 90, "y": 90 }
+    }
+}

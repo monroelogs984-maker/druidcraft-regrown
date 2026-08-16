@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_forest",
+  "features": "druidcraftrg:elder_tree_forest",
+  "step": "vegetal_decoration"
+}

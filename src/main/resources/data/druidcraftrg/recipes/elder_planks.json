@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "planks",
+  "ingredients": [
+    {
+      "tag": "druidcraftrg:elder_logs"
+    }
+  ],
+  "result": {
+    "item": "druidcraftrg:elder_planks",
+    "count": 4
+  }
+}

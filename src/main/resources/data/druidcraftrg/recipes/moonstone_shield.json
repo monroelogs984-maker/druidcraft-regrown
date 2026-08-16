@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "O O",
+    "OXO",
+    "O O"
+  ],
+  "key": {
+    "X": {
+      "item": "druidcraftrg:moonstone"
+    },
+    "O": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "druidcraftrg:moonstone_shield"
+  }
+}

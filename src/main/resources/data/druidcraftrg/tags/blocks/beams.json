@@ -1,0 +1,14 @@
+{
+    "replace": false,
+    "values": [
+        "druidcraftrg:oak_beam",
+        "druidcraftrg:spruce_beam",
+        "druidcraftrg:birch_beam",
+        "druidcraftrg:jungle_beam",
+        "druidcraftrg:acacia_beam",
+        "druidcraftrg:dark_oak_beam",
+        "druidcraftrg:darkwood_beam",
+        "druidcraftrg:stripped_darkwood_beam",
+        "druidcraftrg:elder_beam"
+    ]
+}

@@ -1,0 +1,9 @@
+{
+  "sources": [
+    { "type": "single", "resource": "druidcraftrg:entity/rope/rope_knot" },
+    { "type": "single", "resource": "druidcraftrg:entity/rope/beam_rope" },
+    { "type": "single", "resource": "druidcraftrg:entity/shields/bone" },
+    { "type": "single", "resource": "druidcraftrg:entity/shields/chitin" },
+    { "type": "single", "resource": "druidcraftrg:entity/shields/moonstone" }
+  ]
+}

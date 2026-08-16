@@ -1,0 +1,21 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+out/
+.vscode/
+
+# Run/dev directories
+runs/
+logs/
+
+# Local third-party jars used as offline dependency workarounds
+# (not ours to redistribute — see README for how to obtain them)
+libs/*.jar
+
+# OS
+.DS_Store

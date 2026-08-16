@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "druidcraftrg:dry_mud_bricks"
+  },
+  "result": "druidcraftrg:dry_mud_brick_slab",
+  "count": 2
+}

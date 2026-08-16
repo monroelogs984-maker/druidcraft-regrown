@@ -1,0 +1,10 @@
+{
+    "parent": "block/stonecutter",
+    "textures": {
+        "particle": "druidcraftrg:block/woodcutter_bottom",
+        "bottom": "druidcraftrg:block/woodcutter_bottom",
+        "top": "druidcraftrg:block/woodcutter_top",
+        "side": "druidcraftrg:block/woodcutter_side",
+        "saw": "druidcraftrg:block/woodcutter_saw"
+    }
+}

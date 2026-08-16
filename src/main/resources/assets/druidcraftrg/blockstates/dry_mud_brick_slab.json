@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "type=bottom": { "model": "druidcraftrg:block/dry_mud_brick_slab" },
+        "type=top": { "model": "druidcraftrg:block/dry_mud_brick_slab_top" },
+        "type=double": { "model": "druidcraftrg:block/dry_mud_bricks" }
+    }
+}

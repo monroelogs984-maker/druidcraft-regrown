@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "type=bottom": { "model": "druidcraftrg:block/elder_slab" },
+        "type=top": { "model": "druidcraftrg:block/elder_slab_top" },
+        "type=double": { "model": "druidcraftrg:block/elder_planks" }
+    }
+}

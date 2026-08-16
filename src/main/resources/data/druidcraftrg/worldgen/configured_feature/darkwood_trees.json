@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:random_selector",
+  "config": {
+    "features": [
+      {
+        "chance": 0.5,
+        "feature": "druidcraftrg:mega_darkwood_tree_checked"
+      }
+    ],
+    "default": "druidcraftrg:darkwood_tree_checked"
+  }
+}

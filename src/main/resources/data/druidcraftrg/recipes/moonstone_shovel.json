@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X",
+    "#",
+    "#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:stick"
+    },
+    "X": {
+      "item": "druidcraftrg:moonstone"
+    }
+  },
+  "result": {
+    "item": "druidcraftrg:moonstone_shovel"
+  }
+}

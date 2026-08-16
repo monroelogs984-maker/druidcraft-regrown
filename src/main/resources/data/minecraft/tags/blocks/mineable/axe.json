@@ -1,0 +1,26 @@
+{
+    "replace": false,
+    "values": [
+        "druidcraftrg:darkwood_planks",
+        "druidcraftrg:elder_planks",
+        "druidcraftrg:darkwood_slab",
+        "druidcraftrg:elder_slab",
+        "druidcraftrg:darkwood_stairs",
+        "druidcraftrg:elder_stairs",
+        "druidcraftrg:darkwood_fence",
+        "druidcraftrg:elder_fence",
+        "druidcraftrg:darkwood_fence_gate",
+        "druidcraftrg:elder_fence_gate",
+        "druidcraftrg:darkwood_pressure_plate",
+        "druidcraftrg:elder_pressure_plate",
+        "druidcraftrg:darkwood_button",
+        "druidcraftrg:elder_button",
+        "druidcraftrg:darkwood_trapdoor",
+        "druidcraftrg:elder_trapdoor",
+        "druidcraftrg:darkwood_door",
+        "druidcraftrg:elder_door",
+        "#druidcraftrg:beams",
+        "#druidcraftrg:panels",
+        "druidcraftrg:woodcutter"
+    ]
+}
