@@ -62,7 +62,7 @@ tasks.register('deploy', Copy) {
         include "druidcraftrg-*.jar"
         exclude "*-sources.jar"
     }
-    into '/home/glenn/Documents/curseforge/minecraft/Instances/S202 Neoforge/mods'
+    into '/home/glenn/Documents/curseforge/minecraft/Instances/S202Neoforge/mods'
 }
 
 tasks.register('deployTest', Copy) {

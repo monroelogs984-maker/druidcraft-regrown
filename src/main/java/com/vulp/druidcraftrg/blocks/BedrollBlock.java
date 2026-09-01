@@ -150,7 +150,7 @@ public class BedrollBlock extends BedBlock {
             return InteractionResult.SUCCESS;
          } else {
             player.startSleepInBed(pos).ifLeft(sleepResult -> {
-               if (sleepResult != null) {
+               if (sleepResult.getMessage() != null) {
                   player.displayClientMessage(sleepResult.getMessage(), true);
                }
             });
