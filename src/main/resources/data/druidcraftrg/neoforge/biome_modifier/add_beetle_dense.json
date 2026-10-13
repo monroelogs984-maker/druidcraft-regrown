@@ -1,6 +1,6 @@
 {
   "type": "neoforge:add_spawns",
-  "biomes": "#forge:is_dense/overworld",
+  "biomes": "#c:is_dense_vegetation/overworld",
   "spawners": {
     "type": "druidcraftrg:beetle",
     "weight": 10,

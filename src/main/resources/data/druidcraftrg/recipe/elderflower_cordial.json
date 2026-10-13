@@ -8,9 +8,13 @@
       "item": "druidcraftrg:elderflower"
     },
     {
-      "type": "forge:nbt",
-      "item": "minecraft:potion",
-      "nbt": "{Potion:\"minecraft:water\"}"
+      "type": "neoforge:components",
+      "items": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:water"
+        }
+      }
     }
   ],
   "result": {

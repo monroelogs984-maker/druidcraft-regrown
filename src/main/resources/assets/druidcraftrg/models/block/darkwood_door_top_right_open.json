@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_top_right_open",
+  "textures": {
+    "bottom": "druidcraftrg:block/darkwood_door_bottom",
+    "top": "druidcraftrg:block/darkwood_door_top"
+  }
+}

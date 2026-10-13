@@ -1,6 +1,6 @@
 {
   "type": "neoforge:add_spawns",
-  "biomes": "#forge:is_coniferous",
+  "biomes": "#c:is_tree/coniferous",
   "spawners": {
     "type": "druidcraftrg:beetle",
     "weight": 10,

@@ -9,7 +9,8 @@ import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
 
-// pulsing glow at the heart of the fiery torch flame
+// pulsing glow at the heart of the fiery torch flame — plain translucent sheet (the old additive
+// custom render type ignored texture alpha and is not understood by Iris/Sodium)
 public class FieryGlowParticle extends TextureSheetParticle {
    private final float rotSpeed;
 
@@ -29,7 +30,7 @@ public class FieryGlowParticle extends TextureSheetParticle {
 
    @Override
    public ParticleRenderType getRenderType() {
-      return DruidParticleRenderTypes.TRANSLUCENT_ADDITIVE;
+      return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
    }
 
    @Override

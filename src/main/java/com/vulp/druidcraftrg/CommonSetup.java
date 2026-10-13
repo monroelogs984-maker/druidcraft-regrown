@@ -1,36 +1,17 @@
 package com.vulp.druidcraftrg;
 
 import com.vulp.druidcraftrg.init.BlockInit;
-import com.vulp.druidcraftrg.init.ItemInit;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.FireBlock;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
-// 1.16.5 VanillaIntegrationRegistry — compostables, flammables
+// 1.16.5 VanillaIntegrationRegistry — flammables (compostables are the neoforge:compostables data map)
 public class CommonSetup {
    public static void init(FMLCommonSetupEvent event) {
       event.enqueueWork(() -> {
-         registerCompostables();
          registerFlammables();
       });
-   }
-
-   private static void registerCompostables() {
-      ComposterBlock.COMPOSTABLES.put((ItemLike)() -> ItemInit.hemp_seeds, 0.3F);
-      ComposterBlock.COMPOSTABLES.put((ItemLike)() -> ItemInit.hemp, 0.65F);
-      ComposterBlock.COMPOSTABLES.put((ItemLike)() -> ItemInit.darkwood_sapling, 0.3F);
-      ComposterBlock.COMPOSTABLES.put((ItemLike)() -> ItemInit.darkwood_leaves, 0.3F);
-      ComposterBlock.COMPOSTABLES.put((ItemLike)() -> ItemInit.elder_sapling, 0.3F);
-      ComposterBlock.COMPOSTABLES.put((ItemLike)() -> ItemInit.elder_leaves, 0.3F);
-      ComposterBlock.COMPOSTABLES.put((ItemLike)() -> ItemInit.lavender, 0.65F);
-      ComposterBlock.COMPOSTABLES.put((ItemLike)() -> ItemInit.blueberries, 0.3F);
-      ComposterBlock.COMPOSTABLES.put((ItemLike)() -> ItemInit.elderberries, 0.3F);
-      ComposterBlock.COMPOSTABLES.put((ItemLike)() -> ItemInit.elderflower, 0.3F);
-      ComposterBlock.COMPOSTABLES.put((ItemLike)() -> ItemInit.blueberry_muffin, 0.85F);
-      ComposterBlock.COMPOSTABLES.put((ItemLike)() -> ItemInit.apple_elderberry_crumble, 1.0F);
    }
 
    private static void registerFlammables() {

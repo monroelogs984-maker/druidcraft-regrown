@@ -8,7 +8,9 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -23,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 
@@ -52,7 +55,26 @@ public class FieryTorchBlock extends TorchBlock implements SimpleWaterloggedBloc
    public BlockState getStateForPlacement(BlockPlaceContext context) {
       FluidState fluidstate = context.getLevel().getFluidState(context.getClickedPos());
       BlockState state = super.getStateForPlacement(context);
-      return state == null ? null : state.setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
+      return state == null ? null : state.setValue(WATERLOGGED, fluidstate.is(FluidTags.WATER));
+   }
+
+   // any water waterlogs the torch, flowing included — vanilla only takes sources, which left
+   // flowing water stuck outside the torch as a dry pocket
+   @Override
+   public boolean canPlaceLiquid(@Nullable Player player, BlockGetter level, BlockPos pos, BlockState state, Fluid fluid) {
+      return !state.getValue(WATERLOGGED) && fluid.is(FluidTags.WATER);
+   }
+
+   @Override
+   public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
+      if (!state.getValue(WATERLOGGED) && fluidState.is(FluidTags.WATER)) {
+         if (!level.isClientSide()) {
+            level.setBlock(pos, state.setValue(WATERLOGGED, true), 3);
+            level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+         }
+         return true;
+      }
+      return false;
    }
 
    @Override

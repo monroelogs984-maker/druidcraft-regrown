@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -65,7 +66,7 @@ public class WallFieryTorchBlock extends FieryTorchBlock {
          if (direction.getAxis().isHorizontal()) {
             blockstate = blockstate.setValue(FACING, direction.getOpposite());
             if (blockstate.canSurvive(level, blockpos)) {
-               return blockstate.setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
+               return blockstate.setValue(WATERLOGGED, fluidstate.is(FluidTags.WATER));
             }
          }
       }
@@ -74,10 +75,12 @@ public class WallFieryTorchBlock extends FieryTorchBlock {
 
    @Override
    public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
-      FluidState fluidstate = level.getFluidState(currentPos);
+      if (state.getValue(WATERLOGGED)) {
+         level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+      }
       return facing.getOpposite() == state.getValue(FACING) && !state.canSurvive(level, currentPos)
          ? Blocks.AIR.defaultBlockState()
-         : state.setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
+         : state;
    }
 
    @Override

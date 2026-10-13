@@ -36,7 +36,6 @@ public class WoodcutterScreen extends AbstractContainerScreen<WoodcutterMenu> {
 
    @Override
    protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-      this.renderBackground(graphics, mouseX, mouseY, partialTick);
       int x = this.leftPos;
       int y = this.topPos;
       graphics.blit(BG_LOCATION, x, y, 0, 0, this.imageWidth, this.imageHeight);

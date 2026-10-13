@@ -1,6 +1,6 @@
 {
   "type": "neoforge:add_features",
-  "biomes": "#forge:is_plains",
+  "biomes": "#c:is_plains",
   "features": "druidcraftrg:elder_tree_plains_river",
   "step": "vegetal_decoration"
 }

@@ -1,0 +1,41 @@
+{
+  "replace": false,
+  "values": {
+    "druidcraftrg:hemp_seeds": {
+      "chance": 0.3
+    },
+    "druidcraftrg:hemp": {
+      "chance": 0.65
+    },
+    "druidcraftrg:darkwood_sapling": {
+      "chance": 0.3
+    },
+    "druidcraftrg:darkwood_leaves": {
+      "chance": 0.3
+    },
+    "druidcraftrg:elder_sapling": {
+      "chance": 0.3
+    },
+    "druidcraftrg:elder_leaves": {
+      "chance": 0.3
+    },
+    "druidcraftrg:lavender": {
+      "chance": 0.65
+    },
+    "druidcraftrg:blueberries": {
+      "chance": 0.3
+    },
+    "druidcraftrg:elderberries": {
+      "chance": 0.3
+    },
+    "druidcraftrg:elderflower": {
+      "chance": 0.3
+    },
+    "druidcraftrg:blueberry_muffin": {
+      "chance": 0.85
+    },
+    "druidcraftrg:apple_elderberry_crumble": {
+      "chance": 1.0
+    }
+  }
+}

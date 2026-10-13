@@ -1,7 +1,0 @@
-{
-    "parent": "block/door_top_rh",
-    "textures": {
-        "bottom": "druidcraftrg:block/elder_door_bottom",
-        "top": "druidcraftrg:block/elder_door_top"
-    }
-}
