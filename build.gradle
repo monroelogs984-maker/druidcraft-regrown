@@ -2,7 +2,7 @@ plugins {
     id 'net.neoforged.gradle.userdev' version '7.1.38'
 }
 
-version = '0.0.13-1.21.1'
+version = '0.0.14-1.21.1'
 group = 'com.vulp.druidcraftrg'
 
 base {
@@ -24,7 +24,9 @@ runs {
         modSource project.sourceSets.main
     }
     client {}
-    server {}
+    server {
+        programArgument '--nogui'
+    }
 }
 
 repositories {

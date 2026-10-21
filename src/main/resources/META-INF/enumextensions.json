@@ -1,0 +1,10 @@
+{
+  "entries": [
+    {
+      "enum": "net/minecraft/world/entity/MobCategory",
+      "name": "DRUIDCRAFTRG_LUNAR_MOTH",
+      "constructor": "(Ljava/lang/String;IZZI)V",
+      "parameters": ["druidcraftrg:lunar_moth", 8, true, false, 128]
+    }
+  ]
+}

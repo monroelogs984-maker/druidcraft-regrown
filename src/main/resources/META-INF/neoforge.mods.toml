@@ -9,6 +9,7 @@ license="GNU Lesser General Public License v2.1"
 modId="druidcraftrg"
 version="${file.jarVersion}"
 displayName="Druidcraft Regrown"
+enumExtensions="META-INF/enumextensions.json"
 credits="Original mod by VulpTheHorseDog. Thanks to Noobanidus for getting them started years back. 1.21.1 NeoForge port maintained under LGPL 2.1."
 authors="VulpTheHorseDog"
 description='''
