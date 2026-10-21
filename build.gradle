@@ -3,7 +3,7 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-version = '0.0.12-1.20.1'
+version = '0.0.13-1.20.1'
 group = 'com.vulp.druidcraftrg'
 archivesBaseName = 'druidcraftrg'
 
@@ -23,6 +23,7 @@ minecraft {
         }
         server {
             workingDirectory project.file('run')
+            args '--nogui'
             property 'forge.logging.console.level', 'debug'
             mods {
                 druidcraftrg { source sourceSets.main }

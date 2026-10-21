@@ -19,3 +19,4 @@ libs/*.jar
 
 # OS
 .DS_Store
+run/

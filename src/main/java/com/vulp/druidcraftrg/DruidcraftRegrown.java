@@ -31,6 +31,7 @@ public class DruidcraftRegrown {
 
    public DruidcraftRegrown() {
       IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+      LOGGER.debug("Lunar moth spawn category: {}", EntityInit.LUNAR_MOTH_CATEGORY.getName());
       bus.addListener(this::commonSetup);
       bus.addListener(CommonSetup::init);
       bus.addListener(this::clientSetup);

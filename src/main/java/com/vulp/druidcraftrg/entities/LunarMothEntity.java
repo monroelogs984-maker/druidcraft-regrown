@@ -20,6 +20,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
@@ -28,6 +29,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
@@ -58,6 +60,7 @@ public class LunarMothEntity extends Animal {
    public static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(LunarMothEntity.class, EntityDataSerializers.INT);
    private static final TargetingConditions ENTITY_PREDICATE = TargetingConditions.forNonCombat().range(4.0D);
    private BlockPos spawnPosition;
+   private boolean naturalSpawn;
 
    public LunarMothEntity(EntityType<? extends LunarMothEntity> type, Level worldIn) {
       super(type, worldIn);
@@ -140,6 +143,7 @@ public class LunarMothEntity extends Animal {
       ItemStack stack = LunarMothJarItem.getItemStackByColor(getColor());
       CompoundTag entityData = new CompoundTag();
       addAdditionalSaveData(entityData);
+      entityData.remove("NaturalSpawn"); // a released moth is never wild again
       stack.getOrCreateTag().put("EntityTag", entityData);
       if (!player.getInventory().add(stack)) {
          player.drop(stack, false);
@@ -244,6 +248,7 @@ public class LunarMothEntity extends Animal {
       this.entityData.set(RESTING, compound.getBoolean("MothResting"));
       this.entityData.set(IDLING, Direction.from3DDataValue(compound.getInt("MothIdleDirection")));
       this.entityData.set(COLOR, compound.getInt("Color"));
+      this.naturalSpawn = compound.getBoolean("NaturalSpawn");
    }
 
    @Override
@@ -252,10 +257,26 @@ public class LunarMothEntity extends Animal {
       compound.putBoolean("MothResting", this.entityData.get(RESTING));
       compound.putInt("MothIdleDirection", this.entityData.get(IDLING).get3DDataValue());
       compound.putInt("Color", this.entityData.get(COLOR));
+      compound.putBoolean("NaturalSpawn", this.naturalSpawn);
    }
 
    public static boolean placement(EntityType<LunarMothEntity> entity, LevelAccessor world, MobSpawnType reason, BlockPos pos, RandomSource rand) {
-      return !world.getBlockState(pos.below()).is(Blocks.AIR);
+      if (world.getBlockState(pos.below()).is(Blocks.AIR)) return false;
+      // Keep natural spawns out of caves.
+      return (reason != MobSpawnType.NATURAL && reason != MobSpawnType.CHUNK_GENERATION) || world.canSeeSky(pos);
+   }
+
+   @Override
+   public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag dataTag) {
+      this.naturalSpawn = spawnType == MobSpawnType.NATURAL || spawnType == MobSpawnType.CHUNK_GENERATION;
+      return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData, dataTag);
+   }
+
+   // Only wild moths despawn, so the spawner can keep replacing them. Moths from jars,
+   // spawn eggs and worlds saved before this flag existed stay put.
+   @Override
+   public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+      return this.naturalSpawn;
    }
 
    @Override

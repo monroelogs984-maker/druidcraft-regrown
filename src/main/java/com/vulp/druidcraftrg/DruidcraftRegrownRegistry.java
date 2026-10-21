@@ -534,7 +534,7 @@ public class DruidcraftRegrownRegistry {
             EntityType.Builder.of(BeetleEntity::new, MobCategory.MONSTER).sized(1.5F, 1.5F)
                .setShouldReceiveVelocityUpdates(true).setUpdateInterval(3).build("druidcraftrg:beetle"));
          helper.register(location("lunar_moth"), EntityInit.lunar_moth =
-            EntityType.Builder.of(LunarMothEntity::new, MobCategory.CREATURE).sized(0.5F, 0.5F)
+            EntityType.Builder.of(LunarMothEntity::new, EntityInit.LUNAR_MOTH_CATEGORY).sized(0.5F, 0.5F)
                .setShouldReceiveVelocityUpdates(true).setUpdateInterval(3).build("druidcraftrg:lunar_moth"));
          DruidcraftRegrown.LOGGER.info("Entities Registered!");
       });
